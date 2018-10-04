@@ -1,0 +1,997 @@
+commit 7235a048753d9346d247f00e26418568bf88389c
+Author: Gaoxiang Chen <gaochen@codeaurora.org>
+Date:   Fri Mar 31 17:22:52 2017 +0800
+
+    msm: camera: don't cut to 8bits for validating enum variable
+    
+    In msm_ispif_is_intf_valid(),
+    we convert a enum variable msm_ispif_vfe_intf,
+    to uint8_t type for validating.
+    
+    This could cause potential issue,
+    if the value is crafted in such a way that lower 8bits pass the validation.
+    
+    Don't use uint8_t as input parm to avoid such vulnerability.
+    
+    Bug: 34624155
+    CRs-Fixed: 2008469
+    Change-Id: I4ee400ac0edd830decfbe5712966d968976a268a
+    Signed-off-by: Gaoxiang Chen <gaochen@codeaurora.org>
+    Signed-off-by: Siqi Lin <siqilin@google.com>
+
+commit 78506ab75e0cbbfbf372867cc24282d7e739f4d6
+Author: Ranjith Kagathi Ananda <ranjith@codeaurora.org>
+Date:   Fri Sep 4 16:48:10 2015 -0700
+
+    msm: ispif: Remove handling of SD_SHUTDOWN
+    
+    Remove handling of SD_SHUTDOWN to avoid multiple release.
+    
+    Bug: 31243641
+    
+    Change-Id: I09db8adb766d2e7889443f779a716aaa2f6c09d1
+    Signed-off-by: Harsh Shah <harshs@codeaurora.org>
+    Signed-off-by: Ranjith Kagathi Ananda <ranjith@codeaurora.org>
+
+commit b626b42eb472fd523d2383c606ab39bdbf19c646
+Author: Siqi Lin <siqilin@google.com>
+Date:   Tue Oct 11 11:17:31 2016 -0700
+
+    BACKPORT: msm: camera: Avoid exposing kernel addresses
+    
+    Usage of %p exposes the kernel addresses, an easy target to
+    kernel write vulnerabilities. With this patch currently
+    %pK prints only Zeros as address. If you need actual address
+    echo 0 > /proc/sys/kernel/kptr_restrict
+    
+    Bug: 29464815
+    CRs-Fixed: 987011
+    Change-Id: Ieded0296301ef0935f0b685d1d0eb878a52d6b05
+    Signed-off-by: Azam Sadiq Pasha Kapatrala Syed <akapatra@codeaurora.org>
+    Signed-off-by: Siqi Lin <siqilin@google.com>
+    
+    (cherry-picked from commit 3a214ef870dc97437c7de79a1507dfe5079dce88)
+
+commit cd6f6cf00da047b1dfe6dca6878eb51389d3b019
+Author: Suman Mukherjee <sumam@codeaurora.org>
+Date:   Thu Apr 14 16:13:07 2016 -0700
+
+    msm: camera: ispif: Validate VFE num input during reset
+    
+    Userspace supplies the actual number of used VFEs in session to ISPIF.
+    Validate the userspace input value and if found to be invalid, return
+    error.
+    
+    Bug: 27804715
+    CRs-Fixed: 898074
+    Signed-off-by: Venu Yeshala <vyeshala@codeaurora.org>
+    Signed-off-by: Suman Mukherjee<sumam@codeaurora.org>
+    Change-Id: I3288ddb6404e817a705a92281b4c54666f372c56
+
+commit a3d1632a9d8e0b8e7bca65a3c0dc234735c77a04
+Author: Ranjith Kagathi Ananda <ranjith@codeaurora.org>
+Date:   Fri Mar 18 15:25:56 2016 -0700
+
+    msm: camera: isp: Update reporting for output error
+    
+    For controllable output, there are 2 possible bufq under same stream.
+    When reporting error, use bufq instead of stream to identify correctly.
+    Update reporting of drop for CDS missing frame by adding new mask.
+    
+    Bug: 27771328
+    Bug: 27821985
+    Change-Id: Ib90ac13509008a3b7689bf41656ba39cc2804831
+    Signed-off-by: Harsh Shah <harshs@codeaurora.org>
+    Signed-off-by: Ranjith Kagathi Ananda <ranjith@codeaurora.org>
+
+commit 83143e186a51ac2e55530f1437a1687fe991c3d1
+Author: Petar Sivenov <psiven@codeaurora.org>
+Date:   Fri Feb 13 18:43:14 2015 +0200
+
+    msm:camera:isp: vfe num input validation during reset
+    
+    Userspace supplies the actual number of used VFEs in session to ISPIF.
+    These should be validated against maximum possible VFEs supported by
+    HW otherwise an invalid memory access can ocur.
+    
+    Change-Id: Id5ed315da4b5a8d83401bd692eab586977064fc2
+    Signed-off-by: Petar Sivenov <psiven@codeaurora.org>
+
+commit 81c28689c83f5bcc237e9fcaa78cb1affc95c14d
+Author: Senthil kumar Rajagopal <skrajago@codeaurora.org>
+Date:   Wed Mar 11 11:54:58 2015 -0700
+
+    msm: camera: isp: Fix for CAMIF error
+    
+    While changing resolution, ISPIF and ISP hardware need to be reset
+    to work properly. In the reset hw logic, Some clocks and registers
+    are not reset properly, This causes some IRQ interruots triggered
+    whenever changing resolution.
+    
+    This change fix the Epoch registers with correct line numbers
+    during reset and reset clock is called during close node.
+    
+    Change-Id: Iec3522daa0ad662dd535729f2765c3eed615f053
+    Signed-off-by: Harsh Shah <harshs@codeaurora.org>
+
+commit 37a3b0116a4452d4f6bb247e7130214ab859b0c5
+Author: Alok Kediya <kediya@codeaurora.org>
+Date:   Fri Jan 23 17:24:44 2015 +0530
+
+    msm: isp: validate vfe_intf max params
+    
+    validate the vfe_intf max params to avoid invalid
+    param entries.
+    
+    Change-Id: Ibe5724051a4227fd43c76b2f3141c1593154ff7c
+    Signed-off-by: Alok Kediya <kediya@codeaurora.org>
+
+commit ac3ddd87e0652cc2bd011e2030e2022cc87113e7
+Author: Harsh Shah <harshs@codeaurora.org>
+Date:   Wed Jan 28 16:37:54 2015 -0800
+
+    Revert "msm: camera: isp: Reset ispif hw after stop"
+    
+    Multi-camera related CTS testcases fails due to incorrect
+    sequence for ispif reset during streamoff.
+    So this reverts commit 5c091227bce538b2dab7a132564e6570946790bc
+    
+    Change-Id: I7d55ca3be193772c6d5c0c962e72731dbeba901a
+    Signed-off-by: Harsh Shah <harshs@codeaurora.org>
+    Signed-off-by: Sunid Wilson <sunidw@codeaurora.org>
+
+commit 5c091227bce538b2dab7a132564e6570946790bc
+Author: Harsh Shah <harshs@codeaurora.org>
+Date:   Mon Jan 19 01:03:57 2015 -0800
+
+    msm: camera: isp: Reset ispif hw after stop
+    
+    The hw needs to be reset to clear the line buffers and avoid
+    corruption and errors.
+    
+    Change-Id: I5acc11afa38b8f705fc0bb6bbe86449743780566
+    Signed-off-by: Harsh Shah <harshs@codeaurora.org>
+
+commit a7af1673dc89ab2a014fd0e36823a08b340d75f5
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Wed Jan 7 17:58:16 2015 -0800
+
+    msm: camera: ispif: Validate vfe_intf parameter
+    
+    Validate vfe_intf parameter to avoid invalid register access.
+    
+    Change-Id: I6081ff7c43dea34215a3c1d9b6bb948f6e4c435a
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+
+commit 0484211778ec28f371b3e8604a565aa685b4f87d
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Mon Dec 8 11:10:55 2014 -0800
+
+    msm: camera: ispif: Validate vfe_intf parameter
+    
+    Validate vfe_intf parameter to avoid invalid register access.
+    
+    Change-Id: Ie0b57071cc5fca1c48d3a5e2e7819f9af9ff544c
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+
+commit 375a64f7d7cd3ef8c1b5c27d40fe4bfa53793c7c
+Author: Venu Yeshala <vyeshala@codeaurora.org>
+Date:   Thu Oct 30 09:12:15 2014 +0530
+
+    msm: camera: isp: Revert clock change done for 8909
+    
+    8909 should not use a modified version of 8974 clocks.
+    
+    Change-Id: I44e68eaa53c1c71930ea0e40be70d1164b131937
+    Signed-off-by: Venu Yeshala <vyeshala@codeaurora.org>
+
+commit 6847cc476e2677f12284af555ec242cdde499b80
+Merge: d0c7a35 966d58a
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sun Oct 26 08:13:42 2014 -0700
+
+    Merge "msm: camera: isp: Enable support for 8909"
+
+commit c4e6cc4495afda9b68820d8badc489087f351d87
+Author: Yiduo Wang <yiduow@codeaurora.org>
+Date:   Mon Sep 15 12:11:59 2014 -0700
+
+    msm: camera: Make wait functions in camera driver not interruptible
+    
+    With interruptible wait, when system goes into suspend, the wait
+    returns with ERESTARTSYS. This code path may cause camera daemon
+    to run away due to bad state.
+    
+    Change-Id: I01bc47918e553cee1c8ef497ebef032dd5f2ba0e
+    Signed-off-by: Yiduo Wang <yiduow@codeaurora.org>
+
+commit 966d58a16a718ace4593e84071657a51f27b2202
+Author: Venu Yeshala <vyeshala@codeaurora.org>
+Date:   Tue Oct 21 22:39:36 2014 +0530
+
+    msm: camera: isp: Enable support for 8909
+    
+    Changes related to VBIF usage and dynamic configuration of clocks.
+    
+    Change-Id: I59c152894324054b173f459158bf7754e8d1d5a0
+    Signed-off-by: Venu Yeshala <vyeshala@codeaurora.org>
+
+commit 9d1a75e43c1303a18f72570ecb703718ef04dd5f
+Author: Peter Liu <pingchie@codeaurora.org>
+Date:   Tue May 6 19:10:09 2014 -0700
+
+    msm: camera: add support for bus overflow recovery
+    
+    When bus overflow is detected, system can enter bad state. So we
+    halt, reset and restart the AXI Bus Bridge, CAMIF and ISPIF INTF
+    in order to recover.
+    On overflow detection, kernel halts the AXI Bus Bridge and sends ERROR
+    message to user spacce and wait for it to trigger reset and restart.
+    
+    Change-Id: Ie473d230d4f64b6fd3a0d98f181f4c82a48dab03
+    Signed-off-by: Peter Liu <pingchie@codeaurora.org>
+
+commit d0c34729b37f6a7c3c84efbdf7c67d55b32b4680
+Author: Senthil <skrajago@codeaurora.org>
+Date:   Thu Jun 12 12:33:56 2014 -0700
+
+    msm: camera: Query only AHB clks from dt in ISPIF
+    
+    All clocks used by ISPIF are now added to DTSI.
+    Previously the code assumes only AHB clock is in DTSI.
+    Now the code is updated to query only the AHB clocks
+    out of all the clocks listed.
+    
+    Change-Id: I7843e4eab2f0d14341a1ccb2978a84a23ed12f4d
+    Signed-off-by: Senthil <skrajago@codeaurora.org>
+
+commit 5a717b7d0201f406c02d3b37cf765e4b3ae6d2ba
+Author: Megha Tak <mtak@codeaurora.org>
+Date:   Thu Mar 20 17:37:46 2014 +0530
+
+    msm-camera: Reset ISPIF h/w
+    
+    Reseting ISPIF hardware after ISPIF is stopped without frame
+    boundaries.Enabling all clocks for same.
+    
+    Change-Id: I3712a2af9a3011769e14fab14ddaa5a32f6bcb90
+    Signed-off-by: Megha Tak <mtak@codeaurora.org>
+
+commit 08dee26f4f78c211b84572fd19988ff37625f8a9
+Merge: 6342edd cbb2d68
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Mon May 12 04:13:24 2014 -0700
+
+    Merge "msm:camera:Fix for TCXO shutdown"
+
+commit 3862f390ee6926ea98b20cae5cc6c6d3edc05baa
+Merge: a83a006 cb088c2
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Mon May 5 01:53:25 2014 -0700
+
+    Merge "msm: camera: Make ISPIF not interruptable"
+
+commit cb088c27232681d12859417bc3fc6495d545cfb3
+Author: Yiduo Wang <yiduow@codeaurora.org>
+Date:   Mon Apr 28 11:10:01 2014 -0700
+
+    msm: camera: Make ISPIF not interruptable
+    
+    Change wait_for_completion_interruptible_timeout
+    to wait_for_completion_timeout to avoid interrupted
+    when wait
+    
+    Change-Id: Id9f75d258a35f6e0205695b6391743510e66d3e1
+    Signed-off-by: Yiduo Wang <yiduow@codeaurora.org>
+
+commit cbb2d68ffe1067ec331e915e0324d63b9533bb7b
+Author: Aditya Jonnalagadda <ajonnala@codeaurora.org>
+Date:   Tue Apr 22 16:58:45 2014 +0530
+
+    msm:camera:Fix for TCXO shutdown
+    
+    Due to design change the number of clock references has increased.
+    Updated the clock structure size such that all associated clocks
+    are accounted while enabling and disabling them.
+    
+    Change-Id: Id8ce5c04a6ff82fe055face55cf9a906b600359a
+    Signed-off-by: Aditya Jonnalagadda <ajonnala@codeaurora.org>
+
+commit 7978794ff60d50314287f8c3ba798c1722da14d0
+Author: Vivek Veenam <vveenam@codeaurora.org>
+Date:   Thu Mar 27 20:24:45 2014 +0530
+
+    mm-camera: Remove qcom,clocks from all device dtsi
+    
+    We're moving from qcom,clock-names because clock-names has been
+    accepted in upstream as property name, so we need to migrate our
+    usage to use this name.
+    
+    CRs-Fixed: 631800
+    Change-Id: Id40407b04fc6b77100327f2817aa13b5dffc065f
+    Signed-off-by: Vivek Veenam <vveenam@codeaurora.org>
+
+commit 65cd727791e01e37c2b52ca615953d7cfe3a83ca
+Merge: 59c5831 55f4672
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Wed Apr 16 04:43:18 2014 -0700
+
+    Merge "msm: camera: Fix crash in ispif release"
+
+commit d804b02834ce2a8e1c61dad4a97c4326d6f82ed2
+Merge: 2ea68c1 25654fc
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sat Apr 12 05:03:49 2014 -0700
+
+    Merge "msm: ispif: Assign file ops table and remove redundant pointer conversion"
+
+commit f4e5f96eac409faff3628fa3da665cb08e615577
+Merge: eeebbae 2fff040
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri Apr 11 00:33:20 2014 -0700
+
+    Merge "msm: camera: ispif: Use proper type while comparing negative values."
+
+commit 25654fcb389283d2f0754c2e6094f2be578e1147
+Author: Seemanta Dutta <seemanta@codeaurora.org>
+Date:   Thu Apr 10 18:45:53 2014 -0700
+
+    msm: ispif: Assign file ops table and remove redundant pointer conversion
+    
+    Fix the following two issues:
+    
+    1. Remove the redundant pointer conversion from 32bit space to 64bit
+    space.
+    
+    2. Assign the file operations table pointer to the subdevice file
+    operations.
+    
+    Change-Id: I12e5ee43464b7780f2e929347f491c19961f72ba
+    Signed-off-by: Seemanta Dutta <seemanta@codeaurora.org>
+
+commit 2fff040ed789244bc9a9818502500f8abe19e13e
+Author: Seemanta Dutta <seemanta@codeaurora.org>
+Date:   Wed Apr 9 17:45:48 2014 -0700
+
+    msm: camera: ispif: Use proper type while comparing negative values.
+    
+    Not using the proper type to compare against negative values
+    will not work in case of 64bit build because long and int types
+    have different ranges for LP64 builds. So fix it by using a proper
+    cast.
+    
+    Change-Id: I80c7701f3d41ceb27cae7293df5c6ca5578c34cd
+    Signed-off-by: Seemanta Dutta <seemanta@codeaurora.org>
+
+commit 4e75845a8ef6e8f9d3266ffffe0bb198e94b9779
+Author: Yiduo Wang <yiduow@codeaurora.org>
+Date:   Mon Mar 31 15:23:58 2014 -0700
+
+    msm: camera: Make ISP and camera driver not interruptible
+    
+    Change wait_event_interruptible_timeout to wait_completion_timeout
+    and change wait_completion_timeout_interruptible to
+    wait_event_timeout to avoid keeping on getting signaled
+    which may cause infinite loop when camera daemon fails
+    to put events back.
+    
+    Change-Id: I3612f906569bfa6811510547d7d20a2469378298
+    Signed-off-by: Yiduo Wang <yiduow@codeaurora.org>
+
+commit 55f4672ead2517d83c3b8584877941c3386fb55c
+Author: Suresh Vankadara <svankada@codeaurora.org>
+Date:   Fri Apr 4 19:56:16 2014 +0530
+
+    msm: camera: Fix crash in ispif release
+    
+    There is a BUG_ON in ispif release function for
+    ispif base address. but in case of just open and close
+    of ispif subdevice leads to ispif base NULL.
+    
+    BUG_ON is removed and proper error is added in ispif
+    release function to fix the issue.
+    
+    Change-Id: I0cc12d52aff9db0d9bb8844473f9bd6547270e27
+    CRs-Fixed: 642603
+    Signed-off-by: Suresh Vankadara <svankada@codeaurora.org>
+
+commit 58a13ce1d49a09d19ecee2ce8e46e73a0d99f96c
+Author: Krupal Divvela <kdivvela@codeaurora.org>
+Date:   Thu Mar 13 00:19:02 2014 +0530
+
+    msm: camera: isp: ispif: Get clock names and rates from dtsi files
+    
+    Made changes in ISP, ISPIF driver to get clock names
+    and clock rates from corresponding camera dtsi files.
+    Earlier we had these values assigned in a structure
+    array. Cleaner way is to fetch values from dtsi files.
+    
+    Change-Id: I737c2ed71cfbaea5f3af37a666a74f1fa177cc29
+    Signed-off-by: Krupal Divvela <kdivvela@codeaurora.org>
+
+commit 443c7e21dd66e8189201f449446adbeba139c2fa
+Author: Seemanta Dutta <seemanta@codeaurora.org>
+Date:   Wed Feb 12 16:39:35 2014 -0800
+
+    msm: camera: ispif: Add support for compat ioctls
+    
+    Add support in the ispif driver so that 32bit binaries can make
+    ioctl calls into the ispif driver in addition to 64bit binaries.
+    
+    Change-Id: I97f9deb645b601571e70ff095597a535c67bfcd4
+    Signed-off-by: Seemanta Dutta <seemanta@codeaurora.org>
+
+commit fbb12925916b850703409f040243e30aa69a1824
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Thu Jan 9 17:22:04 2014 -0800
+
+    msm: camera: Add defensive check in ISPIF driver
+    
+    In case of error handling, call ispif release only if ispif handle
+    is valid. In case of mm-qcamara-daemon crash when camera is not open,
+    these handles are not valid. Hence it leads to kernel crash in ispif
+    release handler.
+    
+    Change-Id: Ifb402b6907052594d12fcf9495694e6c5184af1b
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+
+commit 7198f35e85a0186bfb6bdcf5504c12dae5ce8f35
+Author: Seemanta Dutta <seemanta@codeaurora.org>
+Date:   Wed Dec 18 20:26:00 2013 -0800
+
+    msm: ispif: Clean up typecasts/format specifiers
+    
+    Clean up typecasts and format specifiers in msm_ispif.c
+    
+    Change-Id: I53b8aec6f5a2a5f0271ca2f5cab5de6d72c186c2
+    Signed-off-by: Seemanta Dutta <seemanta@codeaurora.org>
+
+commit ea313504cfad9c0ca09a0f956ef4177dce421565
+Merge: 993f5b8 ec56e30
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Tue Dec 17 12:31:44 2013 -0800
+
+    Merge "msm: camera: Restructure ISPIF probe handler"
+
+commit 7d22630c17870acdcc29e4cf916294a4fe1fb9bf
+Author: Yiduo Wang <yiduow@codeaurora.org>
+Date:   Mon Dec 2 18:26:01 2013 -0800
+
+    msm: camera: Limit prints in default cases
+    
+    Change pr_err to pr_err_ratelimited in default
+    case prints of userspace ioctl. pr_err would
+    keep printing when passing wrong parameters in ioctl
+    which will cause watchdog reset.
+    
+    Change-Id: If452c7a7d935a2d955682bbde9b78613bd703b7e
+    CRs-Fixed: 576541
+    Signed-off-by: Yiduo Wang <yiduow@codeaurora.org>
+
+commit ec56e30cffc0883fbb80b87146b9fcf04e42cb44
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Mon Nov 25 20:30:38 2013 -0800
+
+    msm: camera: Restructure ISPIF probe handler
+    
+    v4l2 subdev needs to be created only if probe succeeds.
+    Register v4l2 subdev for ISPIF only if all resources for ISPIF
+    are available than creating and deleting v4l2 subdev in error case.
+    
+    Change-Id: I2ef8eea5f04cdbd15207d8498b1cd8800b854436
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+
+commit ef33ef7f987b0069dee69d352e344b370018e7be
+Author: Hariram Purushothaman <hpurus@codeaurora.org>
+Date:   Tue Nov 26 15:23:38 2013 -0800
+
+    msm: camera: Fix unterminated of_device_id table
+    
+    Add a NULL table entry at end for msm, ispif and
+    msm_generic_buf_mgr device tree match tables.
+    
+    Change-Id: I05f08c77a8a25112cd17955e98018ac88b7a834c
+    CRs-Fixed: 582110
+    Signed-off-by: Hariram Purushothaman <hpurus@codeaurora.org>
+
+commit 35a9669f694913161979365f707bfa8a1878f7e5
+Author: Chandan Gera <cgera@codeaurora.org>
+Date:   Thu Oct 24 14:10:13 2013 +0530
+
+    msm-camera: enable csi-ahb-clk while accessing csi phy registers.
+    
+    Turning on csi_ahb_clk while accessing csi phy registers at
+    boot time to avoid boot time crashes.
+    
+    Change-Id: Ica951d677fb6b6068ff4dd3bf955322fb73e8d77
+    Signed-off-by: Aditya Jonnalagadda <ajonnala@codeaurora.org>
+
+commit 6bfe09f732904f4c6c9815f3b04891f5238fd783
+Author: Sagar Gore <csgore@codeaurora.org>
+Date:   Fri Sep 6 15:24:14 2013 -0700
+
+    msm: camera: Enabling all CSI clocks for ISPIF hw reset
+    
+    To perform complete ISPIF HW reset need to enable all CSI
+    clocks. Earlier only csi0 clock was enabled, causing problems
+    in reseting RDI interface. Also added change to disable clocks
+    before returning from hw reset if there is a timeout.
+    
+    Change-Id: Ia0befc058f06596688b9310ee6c8bf4b017a13ce
+    Signed-off-by: Sagar Gore <csgore@codeaurora.org>
+
+commit b5039861ba0572f33cca10656fe1eb5e85b8e384
+Author: Ju He <juhe@codeaurora.org>
+Date:   Wed Aug 14 12:44:41 2013 +0800
+
+    msm: camera: Fix ispif stop frame boundary timeout issue
+    
+    Previously a 500ms timeout set for stop frame boundary.
+    But sometimes when doing snapshot with large linecount may make
+    the frame rate drop to 1fps. Set the timeout to 1s to avoid camera
+    crash.
+    
+    Change-Id: Id51fb3eb58300df20e792bdab9702af7c4e18943
+    Signed-off-by: Ju He <juhe@codeaurora.org>
+
+commit c88532f1e49e104e55d50c95453559fb4bf41448
+Author: Petar Sivenov <psiven@codeaurora.org>
+Date:   Sat Jul 27 15:17:16 2013 -0700
+
+    msm: camera: ISPIF HW reset is incorrecty invoked
+    
+    Currently ISPIF HW reset is implemented for msm8974 ISPIF HW module only.
+    However, the check for module is not correct and reset sequence is executed
+    for 8226 also, putting HW in bad state. The patch uses correct check
+    against HW version to prevent that.
+    
+    Change-Id: Iff9ab2deb7c6c207d9493ce2abe56bad4d9d7f6f
+    Signed-off-by: Petar Sivenov <psiven@codeaurora.org>
+
+commit ec873544eaf29763716edbac4ba53e8327610f6f
+Author: Lakshmi Narayana Kalavala <lkalaval@codeaurora.org>
+Date:   Tue Jul 16 15:57:03 2013 -0700
+
+    msm: camera: Fix Possible Integer overflow in ispif driver
+    
+    Fix Possible Integer overflow in ispif driver in multiple places.
+    
+    CRs-Fixed: 510051
+    Change-Id: I738c11b2d8e2ef7433bb01ba416590f7952acc2e
+    Signed-off-by: Lakshmi Narayana Kalavala <lkalaval@codeaurora.org>
+
+commit 359d05f60b65c4fbc7e1b31fb42669f732710cda
+Author: Petar Sivenov <psiven@codeaurora.org>
+Date:   Thu Jul 11 12:36:29 2013 -0700
+
+    msm: camera: Non-busy polling and timeout when stopping ISPIF.
+    
+    Previously a busy loop used to wait for ISPIF stop on frame
+    boundary. This was bad not only for busy polling, but
+    because if sensor has stopped streaming for some reason, the ISPIF
+    will never stop thus making the loop endless.
+    The new solution uses readl_poll_timeout macro, polling once in
+    millisecond for maximum of 500 milliseconds (which corresponds to
+    2FPS - minimum supported frame rate). If polling times out, driver
+    reports the error to the user space for appropriate recovery.
+    
+    Change-Id: I14e9825e2c8b67bab7a2e13fa0b0ef4710456805
+    Signed-off-by: Petar Sivenov <psiven@codeaurora.org>
+
+commit 1ec041f81df76f9e633780645a351778c29f4365
+Author: Petar Sivenov <psiven@codeaurora.org>
+Date:   Thu Jul 11 13:00:43 2013 -0700
+
+    msm: camera: Implements ISPIF HW reset.
+    
+    1. Add version and ISPs number properties in DT ISPIF node
+      ISPIF driver needs to know HW version of ISPIF module and number of
+      ISPs to which it is connected in order to execute proper reset of
+      ISPIF module. For this purpose, two optional properties for these
+      are added to ISPIF node. Both properties are optional - if not
+      present, ISPIF driver will use default values.
+    
+    2. Resets ISPIF HW
+      Force hardware reset during hardware start to ensure
+      all the line buffers are cleared. Reset is done once after first
+      open of the module. In order to reset module clocks of CSID and ISPs
+      connected to it should be enabled.
+    
+    Change-Id: I6570ea45d1211c66fe5d6e80d1d2faa019415b68
+    Signed-off-by: Petar Sivenov <psiven@codeaurora.org>
+
+commit 5b5204326603c4e794f3e5dc50198025e82573a0
+Author: Lokesh Kumar Aakulu <lkumar@codeaurora.org>
+Date:   Mon Jun 3 06:08:17 2013 -0700
+
+    msm: camera: msm8610: Add camera pipeline support for 8610
+    
+    Add support to probe camera sensor connected as i2c device
+    and update camera signals for csid and csiphy.
+    
+    Change-Id: I8cfb3ffaf6930e473f6811c900156cd5729627c9
+    Signed-off-by: Lokesh Kumar Aakulu <lkumar@codeaurora.org>
+
+commit 3e8d9eda7339d71c18f5314f76cafd0c839f43dc
+Author: Harsh Shah <harshs@codeaurora.org>
+Date:   Wed May 1 14:59:20 2013 -0700
+
+    msm: camera: Fix the virtual channel calculation bug in ISPIF
+    
+    The in correction calculation of virtual channel (vc) from
+    channel ID is fixed in this patch.
+    
+    Change-Id: I24257f8c1f19992576d3742adc7ce89c7323b7a0
+    Signed-off-by: Harsh Shah <harshs@codeaurora.org>
+
+commit 5a9adbb8407e7fbafcf413f576dc273afe2a5b69
+Author: Ankit Premrajka <ankitp@codeaurora.org>
+Date:   Wed May 1 17:02:17 2013 -0700
+
+    msm: camera_v2: handle subdev releases when qcamera daemon crashes.
+    
+    When the daemon crashes, all the subdevs need to be released in a
+    specific order to ensure proper clean-up. This change creates
+    an ordered list of the subdevs during individual registrations,
+    based on their close sequences, and uses this list to make the release
+    subdev calls.
+    
+    Change-Id: Ic95e53d88ba84f13b9db26f820822ed68dca48dc
+    Signed-off-by: Ankit Premrajka <ankitp@codeaurora.org>
+
+commit 5a6d4da4230f14dfdac7d86404cb7c4f978f3f22
+Author: Kevin Chan <ktchan@codeaurora.org>
+Date:   Mon Apr 29 14:02:52 2013 -0700
+
+    msm: camera: Enable ISPIF line buffer by default
+    
+    With the line buffer enable, it can help to reduce
+    absorb horizontal blanking from the camera sensor.
+    Thus reduce the effective throughput and the load
+    on the bus.
+    
+    Change-Id: Id57f8c74fd67597b79daa5b298e5ff6ec88eeea6
+    Signed-off-by: Kevin Chan <ktchan@codeaurora.org>
+
+commit d1527dddbae4147c6db93ddc00e90fdfa5559d80
+Author: Evgeniy Borisov <eborisov@codeaurora.org>
+Date:   Wed Mar 27 05:14:41 2013 -0700
+
+    msm: camera: Configure CSI clk MUX registers for 8974
+    
+    For camera to be functional, CSID 1, 2 and 3 blocks are fed with CSID 0
+    domain clocks due to improper MUX select register configuration.
+    Configure CSI MUX select registers to feed proper clocks to respective
+    hardware blocks in CSI domain.
+    
+    Change-Id: I2da266a77b71bf74dfe8a7baeecfe444b2528a6a
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+    Signed-off-by: Evgeniy Borisov <eborisov@codeaurora.org>
+    Signed-off-by: Vladislav Hristov <vhrist@codeaurora.org>
+
+commit 38f2b3ee2ae2dd35d00945a5527978865cf220f7
+Author: Vladislav Hristov <vhrist@codeaurora.org>
+Date:   Fri Mar 29 17:59:59 2013 -0700
+
+    msm: camera: Do not do HW reset of the ISPIF
+    
+    There is no real need to reset the ISPIF, as all the ISPIF reset is
+    doing is to reset the registers to default values. But there are too
+    many problems trying to do a reset of the ISPIF as it requires all the
+    clocks from CSID and all clocks from every VFE interface to complete the
+    reset. Because of this it simpler to replace the HW reset with a SW one,
+    where the registers are set to the default value.
+    
+    The only place where ISPIF driver explicitly requires clocks to be
+    enabled is when reset is performed. Because the ISPIF needs only the
+    ispif_ahb_clk clock to be programmed there is also no need to keep the
+    request for the other clocks in the driver. So we can leave this job to
+    the CSID and VFE blocks themselves.
+    
+    This way only the ispif_ahb_clk clock enable requests will be done by
+    the ISPIF and the other clock enable requests will be left to the CSID
+    and VFE drivers per device only when they are used and really needed.
+    This will be enough for the ISPIF to work as desired, as there is no
+    time when the ISPIF can work alone without the CSID and/or VFE running
+    in the same time.
+    
+    Change-Id: I0dbde8b4fef6ee4d5ff15f2195b3dd7936d5eb07
+    Signed-off-by: Vladislav Hristov <vhrist@codeaurora.org>
+
+commit b54c850c9e197eaa2d17748c04724da6bca5ea62
+Author: Vladislav Hristov <vhrist@codeaurora.org>
+Date:   Tue Apr 9 13:37:53 2013 -0700
+
+    msm: camera: Request ispif_ahb_clk in ISPIF driver
+    
+    ISPIF device needs to have "ispif_ahb_clk" clock when, there is a
+    register accesses. If this clock is not turned on and a register access
+    happens the following L2 master port error will happen:
+    
+      <1> L2 Error detected!
+      <1> **L2ESR    = 0x00010001
+      <1> **L2ESYNR0 = 0x19002008
+      <1> **L2ESYNR1 = 0x00409508
+      <1> **L2EAR0   = 0x00028106
+      <1> **L2EAR1   = 0x00000001
+      <1> **CPU bitmap = 0x1
+      <1> L2 master port decode error
+      <6> coresight-tmc fc307000.tmc: TMC aborted
+      <0> Kernel panic - not syncing: L2 master port error detected
+    
+    Before this patch this request was left to be done by the CSID and
+    CSIPHY drivers, as they also need this clock. This provides a
+    possibility of a race condition, where the userspace, might request not
+    in sync the drivers and they might not enable the clocks in the correct
+    order. In such a case the ISPIF device might be left without clocks
+    being enabled, while a transaction to its register is about to be done,
+    which will result in the above kernel panic. To prevent this issue, the
+    ISPIF driver requests the required clock on its own without depending on
+    other drivers to do so.
+    
+    Change-Id: I3f9f6239c4aaa75a9672ab3a0032ecf9ea455cf1
+    Signed-off-by: Vladislav Hristov <vhrist@codeaurora.org>
+
+commit 1a1db184d246e9193aab8fa0e24f97644e6554a5
+Author: Mingcheng Zhu <mingchen@codeaurora.org>
+Date:   Mon Apr 1 14:55:35 2013 -0700
+
+    msm: camera:v2: config PIX0 line buffer enable bit
+    
+    When enable dual VFE crop, the VFE0's PIX interface's line buffer
+    needs to be enabled.
+    
+    Change-Id: I64fed15d0326ba40d2ad84d04e9f7270a0a07d75
+    Signed-off-by: Mingcheng Zhu <mingchen@codeaurora.org>
+
+commit 8296bc10afd633d5fc323f4595e09cb457a0d3b7
+Author: Vladislav Hristov <vhrist@codeaurora.org>
+Date:   Thu Mar 28 13:24:18 2013 -0700
+
+    msm: camera: Prevent using ISPIF when not UP
+    
+    When ISPIF is not in ISPIF_POWER_UP state, this means that it will not
+    have register base ioremapped, will not have IRQs reqested and so on. In
+    this case ISPIF must not be used as it will result in an kernel panic
+    with the following symptoms:
+    
+    ------------[ cut here ]------------
+    Unable to handle kernel paging request at virtual address f0d0e248
+    ....
+    [<c0435738>] (msm_camera_io_w_mb+0x2c/0x44) from [<c044407c>] (msm_ispif_intf_cmd+0x138/0x178)
+    [<c044407c>] (msm_ispif_intf_cmd+0x138/0x178) from [<c0444f64>] (msm_ispif_subdev_ioctl+0x88c/0x9e0)
+    [<c0444f64>] (msm_ispif_subdev_ioctl+0x88c/0x9e0) from [<c04648f4>] (subdev_do_ioctl+0x490/0x530)
+    [<c04648f4>] (subdev_do_ioctl+0x490/0x530) from [<c0459c94>] (video_usercopy+0x360/0x4dc)
+    [<c0459c94>] (video_usercopy+0x360/0x4dc) from [<c0458edc>] (v4l2_ioctl+0x68/0x114)
+    [<c0458edc>] (v4l2_ioctl+0x68/0x114) from [<c0154734>] (do_vfs_ioctl+0x4d8/0x54c)
+    [<c0154734>] (do_vfs_ioctl+0x4d8/0x54c) from [<c01547dc>] (sys_ioctl+0x34/0x54)
+    [<c01547dc>] (sys_ioctl+0x34/0x54) from [<c000e000>] (ret_fast_syscall+0x0/0x30)
+    Code: e1a00000 eaffffff e1a00000 e3500000 (e5845000)
+    ---[ end trace 90991692f8caa754 ]---
+    
+    The above panic can happen when the device have been opened and there
+    were no ISPIF_INIT cmd, before calling one of the following ISPIF cmds:
+      - ISPIF_CFG
+      - ISPIF_START_FRAME_BOUNDARY
+      - ISPIF_STOP_FRAME_BOUNDARY
+      - ISPIF_STOP_IMMEDIATELY
+    
+    Or there were call to msm_ispif_relese with one of the above commands
+    called after this.
+    
+    The only case when the above commands can be issued is between
+    ISPIF_INIT and ISPIF_RELEASE (or close of the device) calls with
+    success. In order to prevent usage of the above commands in this
+    situation, just provide a check for the ISPIF and return -EPERM error
+    when the ISPIF is not in the correct state.
+    
+    Change-Id: Ic02794382b301e555a7e9f897ee9c6f67b5818fd
+    Signed-off-by: Vladislav Hristov <vhrist@codeaurora.org>
+
+commit c73aeb01e1c1282066e89d0031d9fcfc71110706
+Author: Mingcheng Zhu <mingchen@codeaurora.org>
+Date:   Fri Mar 29 18:11:08 2013 -0700
+
+    msm: camera: Add crop support in ISPIF
+    
+    Ispif crops sensor input for dual VFE to use.
+    Sensor will still output only one big frame, and
+    ispif needs to split a whole frame into two part
+    for dual ISP to use.
+    
+    Change-Id: I42ae48bc3b070625e91f3cc5003339ba8035d6b9
+    Signed-off-by: Peter Liu <pingchie@codeaurora.org>
+    Signed-off-by: Mingcheng Zhu <mingchen@codeaurora.org>
+
+commit b62790f83e8e92fd77b9b029863474697cf41780
+Author: Mingcheng Zhu <mingchen@codeaurora.org>
+Date:   Fri Mar 29 18:09:49 2013 -0700
+
+    msm: camera: Improved dual-ISP support in ISPIF and reset timeing fix
+    
+    fix ispif reset timing so ISP will get correct reset from ispif.
+    or after streamon, isp will wait for ispif reset and never streamon.
+    Only to enable clock when it is needed.
+    After ispif configuration, the clock is disabled.
+    
+    Change-Id: Ieb316c5d587a0777fe226507dfb32e1d25f521a7
+    Signed-off-by: Peter Liu <pingchie@codeaurora.org>
+    Signed-off-by: Mingcheng Zhu <mingchen@codeaurora.org>
+
+commit db9ffa7cbee15b1609083258561ee8d91f144456
+Author: Vladislav Hristov <vhrist@codeaurora.org>
+Date:   Mon Mar 18 10:11:46 2013 -0700
+
+    msm: camera: Use info about VFEs in ISPIF
+    
+    There can be SoCs which have different amount of VFEs connected to
+    ISPIF, while the CSID version is kept the same. For such cases there is
+    a need to have additional information about the number of VFEs connected
+    to each ISPIF interface, and its capabilities.
+    
+    As there is no way for the ISPIF to guess this information on its own,
+    this change introduces a new ISPIF ioctl cmd, called ISPIF_SET_VFE_INFO.
+    This command will store the information for the number of VFEs connected
+    and also VFEs capabilities.
+    
+    The above information is used where number of VFEs information is
+    required. Such places are vfe clock request, ISPIF irq handling and
+    others.
+    
+    Change-Id: I0177470b3965c8a83349c367716d9006c1f49630
+    Signed-off-by: Vladislav Hristov <vhrist@codeaurora.org>
+
+commit c66da5641575799691b373af0bebe8f9ecf4c1fb
+Author: Vladislav Hristov <vhrist@codeaurora.org>
+Date:   Mon Mar 18 10:08:34 2013 -0700
+
+    msm: camera: separate clk enable in ispif
+    
+    ISPIF driver should request VFE clocks on a need bases. It is generally
+    not a good idea to request all the possible clocks at open time, and
+    free them at close. For this reason the ISPIF driver is modified to
+    request only the clock which are really needed at some moment for its
+    operation. This includes clock requests for VFE0 and VFE1 at init time
+    when the reset should happen, and release them immediately after that.
+    
+    Also to ensure the normal working when there is a request for operation
+    with the ISPIF, the clocks are enabled and disabled immediately. The
+    reason for this is that VFE clocks are enabled by the VFE when there is
+    a need of VFE, and the ISPIF only requires the clocks when it is being
+    configured. In all other cases the VFE will take care of enabling them.
+    
+    Change-Id: Ie72afa9448436c14447b2212ae54c6111038d516
+    Signed-off-by: Vladislav Hristov <vhrist@codeaurora.org>
+
+commit bca6e6389e3e9ca1a460636ce29beae612380ac3
+Author: Vladislav Hristov <vhrist@codeaurora.org>
+Date:   Fri Mar 1 12:06:01 2013 -0800
+
+    msm: camera: Use a new reset_complete per VFE
+    
+    Each VFE can be reset separate from the other. As this can happen during
+    the reset of the other, it is not reliable to wait on a single
+    completion.
+    
+    Also this change completes VFE1 reset_complete on reset done IRQ.
+    
+    Change-Id: I37177df4d15f04a7fad81b0f62544cd7b50e9d92
+    Signed-off-by: Vladislav Hristov <vhrist@codeaurora.org>
+
+commit b9dba2d8b33c543ba573d45646b9a696606d80c9
+Author: Petar Sivenov <psiven@codeaurora.org>
+Date:   Fri Feb 15 19:52:00 2013 -0800
+
+    msm: camera: Added support for VFE1 in ISPIF.
+    
+    Added full set for ISPIF VFE1 registers support.
+    
+    Change-Id: I4054f0cac7301dfb37e5215c9c0dd2817b7e90ca
+    Signed-off-by: Petar Sivenov <psiven@codeaurora.org>
+
+commit dc9c67935d08f76cf1171f1eddb441bbc954c9a5
+Author: Mingcheng Zhu <mingchen@codeaurora.org>
+Date:   Thu Feb 21 15:32:57 2013 -0800
+
+    msm: ispif: Protect shared resource
+    
+    Add a spinlock and a boolen wait_timeout to protect shared resource
+    between IRQ handle and userspace IOCTL access. There should have no
+    complete if timed out or interrupted.
+    
+    Change-Id: Ibf28da252fb665e997c89344a85a817ed14c5b81
+    CRs-Fixed: 452849
+    Signed-off-by: Mingcheng Zhu <mingchen@codeaurora.org>
+
+commit c4d2fbdeed4a1d692d2d1744be4ab2da502ae589
+Author: Kevin Chan <ktchan@codeaurora.org>
+Date:   Thu Jan 31 16:08:35 2013 -0800
+
+    msm: camera: Refactor ISP RDI pipeline control
+    
+    Split raw dump interface configuration from stream
+    configuration to align with other ISP input configuration.
+    Add image formats to differentiate MIPI raw format and
+    Qualcomm raw format.
+    
+    Change-Id: Ieefc4401ff5142682d7891debfe041ae6bd44145
+    Signed-off-by: Kevin Chan <ktchan@codeaurora.org>
+
+commit 4a7fe6a51d569b050edf2545533cd68a53fa532e
+Author: Shuzhen Wang <shuzhenw@codeaurora.org>
+Date:   Tue Feb 12 11:29:08 2013 -0800
+
+    msm: camera: Fix incorrect return on error case
+    
+    For V2 version of CSID, we should only do early return
+    in error case.
+    
+    Change-Id: I029df006d5f1e50fe3a36cd7e363571515f150dc
+    Signed-off-by: Shuzhen Wang <shuzhenw@codeaurora.org>
+
+commit 271bf4bc24a477d976f9d874cd4ff703e29d7d22
+Author: Kevin Chan <ktchan@codeaurora.org>
+Date:   Sun Feb 10 17:52:55 2013 -0800
+
+    msm: camera: Add support for 8974 V2 ISPIF
+    
+    CSID version is updated in 8974 V2.
+    Update code to support newer csid version number.
+    
+    Change-Id: I8a424ded96c1e0a1435a58379b1cf4cf5e405a45
+    Signed-off-by: Kevin Chan <ktchan@codeaurora.org>
+
+commit 2023b961a11f701b1ea7647ee1aae7ab56c45308
+Author: Ujwal Patel <ujwalp@codeaurora.org>
+Date:   Thu Jan 24 14:36:33 2013 -0800
+
+    msm: camera_v2: add ispif_v1 on camera_v2 based framework
+    
+    ISPIF hw has a common driver between two different versions. Add two
+    separate register description headerfiles with respective offsets
+    and masks.
+    
+    Change-Id: I0030b6b805fdc6a785113ca2dafe3052f3c9f7d6
+    Signed-off-by: Ujwal Patel <ujwalp@codeaurora.org>
+
+commit 5d6d1e5d400227710c7c2806109723a7bd59ab6c
+Author: Matt Wagantall <mattw@codeaurora.org>
+Date:   Mon Jan 28 17:41:24 2013 -0800
+
+    msm: camera: Disable debug prints by default
+    
+    Remove the '#define CONFIG_MSMB_CAMERA_DEBUG' found at the top of
+    the msm camera_v2 driver files. The presence of this #define enabled
+    excessive informational/debugging prints that contributed a lot of
+    noise to the kernel logs.
+    
+    Change-Id: Ie208be2ff6422531ec07989b8d76ac469bc97586
+    Signed-off-by: Matt Wagantall <mattw@codeaurora.org>
+
+commit cbdb2ce641611dd1cdb2d37b0454bb9b390c698f
+Author: Kevin Chan <ktchan@codeaurora.org>
+Date:   Fri Jan 11 14:08:14 2013 -0800
+
+    msm: msmb: ISP interface driver and ISP driver implementation
+    
+    (1) ISP interface(ISPIF) sits between sensor(CSID) and ISP.
+        It's responsible to mux sensor's output path to
+        ISP input path. ISPIF driver contains two parts, i.e.,
+        user space driver and kernel driver. The kernel driver is
+        mainly for register write and read.
+    
+    (2) Image signal processing(ISP) driver's responsiblity is to
+        processed the sensor's raw image to generate the YUV image
+        for rending/video encoding and snapshot. ISP driver has
+        following main functional blcoks:
+        - Image bus(AXI) management and configuration
+        - ISP processing pipeline configuration and run time update
+        - ISP input interface(CAMIF) configuration
+        - Image buffer management
+        - ISP interrupt handling
+        - ISP kernel event notification to user space
+        - ISP hardware start/stop state machine.
+        This patch implemented the ISP kernel driver.
+    
+    Change-Id: I5f222c6a2df8b4c26b0948ef3fb2e36e859d0964
+    Signed-off-by: Kevin Chan <ktchan@codeaurora.org>

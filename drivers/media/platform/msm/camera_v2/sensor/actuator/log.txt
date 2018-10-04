@@ -1,0 +1,889 @@
+commit d6c43833f2a03b02f83adce8561917bd996ed2a7
+Author: Ranjith Kagathi Ananda <ranjith@codeaurora.org>
+Date:   Mon Oct 3 04:01:32 2016 -0700
+
+    msm: sensor: Adding mutex for actuator power down operations
+    
+    Protecting operations performed during actuator powerdown
+    from race condition by adding mutex.
+    
+    CRs-Fixed: 1071891
+    Bug: 31225246
+    
+    Ack-by: Sureshnaidu Laveti
+    Change-Id: I7d6b2e8878788615c02678a4a28d31dca0ed6bca
+    Signed-off-by: Sureshnaidu Laveti <lsuresh@codeaurora.org>
+    Signed-off-by: Yueyao Zhu <yueyao@google.com>
+
+commit b7541e67cf626360b4e4f3eb3b90271bdcf7f630
+Author: Suman Mukherjee <sumam@codeaurora.org>
+Date:   Thu Sep 22 09:06:48 2016 +0530
+
+    msm: sensor: validate the i2c table index before use
+    
+    Verifying the i2c table index value before accessing
+    the i2c table to avoid memory corruption issues.
+    CRs-Fixed: 1065916
+    
+    Bug: 30740545
+    Change-Id: I0e31c22f90006f27a77cd420288334b8355cee95
+    Signed-off-by: Sureshnaidu Laveti <lsuresh@codeaurora.org>
+    Signed-off-by: Suman Mukherjee <sumam@codeaurora.org>
+    Signed-off-by: Mekala Natarajan <mnatarajan@google.com>
+
+commit b626b42eb472fd523d2383c606ab39bdbf19c646
+Author: Siqi Lin <siqilin@google.com>
+Date:   Tue Oct 11 11:17:31 2016 -0700
+
+    BACKPORT: msm: camera: Avoid exposing kernel addresses
+    
+    Usage of %p exposes the kernel addresses, an easy target to
+    kernel write vulnerabilities. With this patch currently
+    %pK prints only Zeros as address. If you need actual address
+    echo 0 > /proc/sys/kernel/kptr_restrict
+    
+    Bug: 29464815
+    CRs-Fixed: 987011
+    Change-Id: Ieded0296301ef0935f0b685d1d0eb878a52d6b05
+    Signed-off-by: Azam Sadiq Pasha Kapatrala Syed <akapatra@codeaurora.org>
+    Signed-off-by: Siqi Lin <siqilin@google.com>
+    
+    (cherry-picked from commit 3a214ef870dc97437c7de79a1507dfe5079dce88)
+
+commit 5266303a5d12e2b9c9a5d4d9f42e47fcc21dfb7b
+Author: Rajesh Bondugula <rajeshb@codeaurora.org>
+Date:   Wed Apr 13 14:31:00 2016 -0700
+
+    msm: camera: sensor: Validate step_boundary
+    
+    step_boundary can take values upto the total_steps
+    Validate the step_boundary before consuming it.
+    Convert the type of step_index and region_index to uint16_t
+    step_index and region_index cannot be negative.
+    
+    Bug: 27890772
+    
+    CRs-Fixed: 1001092
+    Change-Id: I1f23fd6f28bb897824a1ef99a8873b9f986eee70
+    Signed-off-by: Rajesh Bondugula <rajeshb@codeaurora.org>
+
+commit 3735176d9c28e2193f12addd82628cd20365b50e
+Author: Shuzhen Wang <shuzhenwang@google.com>
+Date:   Mon Jan 25 16:29:45 2016 -0800
+
+    msm: camera_v2: Improve error logging
+    
+    Print error message in camera driver before returning
+    ENOIOCTLCMD.
+    
+    Bug: 26309661
+    Change-Id: I7a54396ce735301d073edc5e8e58c6b612ab01c0
+    Signed-off-by: Shuzhen Wang <shuzhenwang@google.com>
+
+commit 9b6596d482c48807ac70233d57dc53ce683aa871
+Author: Ranjith Kagathi Ananda <ranjith@codeaurora.org>
+Date:   Wed Sep 23 16:23:55 2015 -0700
+
+    msm: sensor: actuator: NULL pointer protection for step table
+    
+    Add NULL pointer check in case step table is not created.
+    
+    b/24294682
+    
+    Change-Id: I09852ea97b95cf256244b89a2e64156f1b9ac711
+    Signed-off-by: Kyong Hwa Bae <kbae@codeaurora.org>
+    Signed-off-by: Ranjith Kagathi Ananda <ranjith@codeaurora.org>
+
+commit 19d4402b4f03aecff087fbeefb9427006daf054f
+Author: Mansoor Aftab <maftab@codeaurora.org>
+Date:   Wed Jun 17 14:30:30 2015 -0700
+
+    camera_v2: actuator: bivcm_set with infinity direction register value
+    
+    correct the direction register for the reset_lense
+    
+    Change-Id: Iebe362c514602247bced18d994cce41288f34565
+    Signed-off-by: Soundrapandian Jeyaprakash <jsoundra@codeaurora.org>
+    Signed-off-by: Mansoor Aftab <maftab@codeaurora.org>
+
+commit 953b565c8e16299ce8912ca977f311638f181393
+Author: Viswanadha Raju Thotakura <viswanad@codeaurora.org>
+Date:   Tue Jun 2 11:35:03 2015 -0700
+
+    msm: camera: Fix to release cci clocks
+    
+    actuator and ois are not voting for cci clock release,
+    fix state machine to overcome it.
+    
+    Change-Id: Ib8e2fb596d149bf4cc196f2ba8b34276175f43f1
+    Signed-off-by: Viswanadha Raju Thotakura <viswanad@codeaurora.org>
+    Signed-off-by: Soundrapandian Jeyaprakash <jsoundra@codeaurora.org>
+
+commit f345f306dc160744e794fe69e69cbc503fed7451
+Author: Viswanadha Raju Thotakura <viswanad@codeaurora.org>
+Date:   Tue May 12 23:50:20 2015 -0700
+
+    msm: camera: Fix state machine for camera sensor subdevs
+    
+    Fix actuator and ois state machines, otherwise cci release
+    is called multiple times.
+    
+    Change-Id: I6e90aa5eda1a07f544dceb3f8522dc0af6e9f05d
+    Signed-off-by: Viswanadha Raju Thotakura <viswanad@codeaurora.org>
+
+commit 46d2e047f0645abcbbb9368cbbefd47341d762d9
+Merge: ff8e924 f6283b7
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Wed Mar 18 16:02:42 2015 -0700
+
+    Merge "msm: camera: Make sure the init happens before release in actuator"
+
+commit f6283b739de64b9420b7d532b561bd1af32a13e4
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Mon Feb 9 15:25:31 2015 +0200
+
+    msm: camera: Make sure the init happens before release in actuator
+    
+    Add conditional checks to make sure that init happens before
+    release operation in actuator and ois drivers.
+    
+    Change-Id: Icabce32ab67d577a068dfd2e2f6fc70bcf73fa3e
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit 68c3ad79b12b25dcdc47aa56d94fcecc7ea5d91f
+Author: Evgeniy Borisov <eborisov@codeaurora.org>
+Date:   Tue Mar 10 16:33:51 2015 +0200
+
+    msm: camera: Set correct I2c master dev
+    
+    Set correct i2c master device in actuator driver
+    probe function.
+    
+    Change-Id: Ie63145c45068e0c1b4b1619d6e2bc31eb740a6f4
+    Signed-off-by: Evgeniy Borisov <eborisov@codeaurora.org>
+
+commit 6512f77582a78945b84a3f0fe0ca72a49ed1d5be
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Thu Jan 22 11:25:09 2015 +0200
+
+    msm: camera: validate user space parameter for max and min value
+    
+    Validate input user space parameter in actuator driver for
+    maximal and minimal value to prevent error.
+    
+    Change-Id: Ideeb87218af3cdf5b7902b5883911fe29ac4338a
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit 48ee8e60d4269b30dc4d5fbd8d29b530de2ac6d2
+Author: Lokesh Kumar Aakulu <lkumar@codeaurora.org>
+Date:   Sat May 31 03:11:39 2014 +0530
+
+    msm: camera: Avoid memory corruption in actuator start routine
+    
+    When actuator is initialize for first time reg_tbl and step_position
+    table pointers are pointed to junk and can't call for memory free.
+    call for memory free only when actuator is already powered up.
+    
+    Change-Id: I1fc7d0ed5ad904f9d532651b0468073fd75c284e
+    Signed-off-by: Lokesh Kumar Aakulu <lkumar@codeaurora.org>
+
+commit a7429a101b6e131daa236c101a29e271f271d898
+Author: Xu Han <hanxu@codeaurora.org>
+Date:   Fri Jan 16 15:28:07 2015 -0800
+
+    msm: sensor: remove bivcm park lens function
+    
+    There is no need to park lens for closed-loop bi-directional
+    VCM actuator. Remove the function.
+    
+    Change-Id: I56611f67462631c389fdc5cd47aa86241161fe90
+    Signed-off-by: Xu Han <hanxu@codeaurora.org>
+
+commit a4847e67820d0838fa3226dd7b7ed282a7402586
+Author: Viswanadha Raju Thotakura <viswanad@codeaurora.org>
+Date:   Thu Nov 20 16:03:10 2014 -0800
+
+    msm: camera: add support for bidirectional vcm actuator
+    
+    Add support in actuator driver to support bi vcm and
+    extend the functionality to suppport direction, pre
+    and post move register configuration. Extend the init
+    setting size macro to support this actuator.
+    
+    Change-Id: I55a2aa49deec08066b2cd0f220da4ceb1bee1f01
+    Signed-off-by: Viswanadha Raju Thotakura <viswanad@codeaurora.org>
+    Signed-off-by: Xu Han <hanxu@codeaurora.org>
+
+commit a2823ed9a56acd259a677224d1dd7b2cb8cc0229
+Author: Xu Han <hanxu@codeaurora.org>
+Date:   Wed Dec 10 18:29:05 2014 -0800
+
+    msm: camera: consider scale factor when creating actuator table
+    
+    To have more resolution in actuator position table, code_per_step
+    is scaled up in userspace. In kernel, when step position table is
+    created, the code in the table is scaled down by the same scale
+    factor(qvalue) so that correct value can be seen by actuator HW.
+    
+    Change-Id: I7921b008263e597f94b31fd25afaffce12350208
+    Signed-off-by: Xu Han <hanxu@codeaurora.org>
+
+commit ee7d81f03dc15ead290ad801bc602e39e7cf0b84
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Fri Nov 21 16:24:20 2014 +0200
+
+    msm: camera: sensor: reduce park lens time
+    
+    Add conditions which help to reduce lens park time
+    without audible tick noise from camera module
+    
+    Change-Id: I449783e9b825dd761023e14663552320314a2e1b
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit 62bb14097bb15cef87ce4e373963f4b6f41a03d2
+Merge: a88e719 2850402
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Nov 13 07:51:33 2014 -0800
+
+    Merge "msm: camera: sensor: Fix actuator power on for i2c device"
+
+commit 2850402846fa78f1c4d2036b9f23b142cfac86d9
+Author: Rajesh Bondugula <rajeshb@codeaurora.org>
+Date:   Wed Nov 12 16:14:20 2014 -0800
+
+    msm: camera: sensor: Fix actuator power on for i2c device
+    
+    Pass appropriate dev handle to msm_camera_config_single_vreg
+    to enable power to actuator.
+    
+    Change-Id: I754db0877fd86894ce4a1eae5ff750d72250a3cf
+    Signed-off-by: Rajesh Bondugula <rajeshb@codeaurora.org>
+
+commit 73d769687ab89a85e86a916bc348738b670d0f66
+Author: Rajesh Bondugula <rajeshb@codeaurora.org>
+Date:   Mon Nov 10 16:19:04 2014 -0800
+
+    msm: camera: sensor: initialze the subdev fops instance
+    
+    Initialize the subdev fops instance with
+    standard v4l2 subdev fops.
+    
+    Change-Id: I14191ecff0fde9dcb5df04b6d092d6afc2b8794b
+    Signed-off-by: Rajesh Bondugula <rajeshb@codeaurora.org>
+
+commit b17d7f6191dd38f91841ac8b5f12986d402c6aa2
+Author: Ivan Evlogiev <ivanevlogiev@codeaurora.org>
+Date:   Thu Oct 2 19:30:01 2014 +0300
+
+    msm-camera: copy move focus result to user space
+    
+    User space needs update of current lens position in
+    msm_actuator_cfg_data. So after servicing ioctrl
+    data needs to be copied from temp data to result
+    structure, which will be copied to user space in
+    video_usercopy
+    
+    Change-Id: I13062015a614f46413fae69b5aee55a0785aba6f
+    Signed-off-by: Ivan Evlogiev <ivanevlogiev@codeaurora.org>
+
+commit 7a6da00b042a3d1976ea069c8d04e557201b516d
+Author: Rajesh Bondugula <rajeshb@codeaurora.org>
+Date:   Fri Sep 19 22:06:18 2014 -0700
+
+    msm: camera: sensor: Read actuator voltage reg
+    
+    Read actuator voltage reg params in i2c probe.
+    Assign the compat structure in i2c probe.
+    
+    Change-Id: I9f8d286bae5fbfd938558b7994289e67d32786c0
+    Signed-off-by: Rajesh Bondugula <rajeshb@codeaurora.org>
+
+commit 274fc6b7da75727fc169ac723da4c7791d6047ad
+Author: Anil Kumar Jaiswal <ajaisw@codeaurora.org>
+Date:   Tue Sep 16 16:26:08 2014 -0700
+
+    Revert "msm: camera: sensor: bugfix for cci ref count issue"
+    
+    This reverts commit fb5613c7f264a1094c8a153e7ecb3b3d8cf8098e
+    
+    Revert the change because close operation in OIS and actuator
+    are needed while closing the stream, which in turn
+    de-initializes/releases cci.
+    
+    Change-Id: I168013e461c52382843355771ffcfdd17fa9bb72
+    Signed-off-by: Viswanadha Raju Thotakura <viswanad@codeaurora.org>
+
+commit fb5613c7f264a1094c8a153e7ecb3b3d8cf8098e
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Fri Sep 12 15:25:14 2014 +0300
+
+    msm: camera: sensor: bugfix for cci ref count issue
+    
+    fix which prevent of cci ref count issue, in both actuator and
+    ois drivers have init of cci one time, and cci close twice
+    
+    Change-Id: If532be97bacd1c1e5696cd0a60d11807f007ccf2
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit 23b26c22d7d932eb8c2c7844ed1a583050fc4c7f
+Author: Kyong Hwa Bae <kbae@codeaurora.org>
+Date:   Wed Jul 23 16:26:26 2014 -0700
+
+    msm: camera: sensor: Update actuator power up state
+    
+    When power up the actuator, set the current actuator
+    state as power up. So when the time of power down,
+    actuator can be actually turned off.
+    Delete vcm_enable, pwd that is not referred any more.
+    
+    Change-Id: Ifa1d4dd6a8833d662683e82986877d687bdfa09b
+    Signed-off-by: Kyong Hwa Bae <kbae@codeaurora.org>
+
+commit 6715ea7d86682e6924cb69bf0aa1c3cf31b3bb17
+Author: Viswanadha Raju Thotakura <viswanad@codeaurora.org>
+Date:   Wed Jul 16 14:39:41 2014 -0700
+
+    msm: camera: Add compat ioctl for  camera sensor
+    
+    Add compat ioctl for actuator set position in camera sensor.
+    
+    Change-Id: I7af1860ed070e6ca0534fe0f8bd514be42316cb3
+    Signed-off-by: Viswanadha Raju Thotakura <viswanad@codeaurora.org>
+
+commit 7690c2231926d6964f78d413bedf160cba91980a
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Fri Jun 27 14:53:12 2014 -0700
+
+    msm: camera: sensor: remove valid position from actuator driver
+    
+    Valid_position is no more needed to set the default position to
+    the inital code.
+    The userspace handles the same via set_position call.
+    
+    Change-Id: I4e2024fd139ff8f57fd87d2171ba4f6fc28b4d79
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit ff1ff8e01dc72367e9c013ebd0671f913da26254
+Merge: 72cb5cb 0cd0341
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Wed Jul 2 11:30:16 2014 -0700
+
+    Merge "msm: camera: sensor: populate addr type of registers in actuator"
+
+commit 2397969415fa28ffc88659fc727cfa23e3de5082
+Author: Rajesh Bondugula <rajeshb@codeaurora.org>
+Date:   Tue Jun 24 11:39:06 2014 -0700
+
+    msm: camera: sensor: Set the default actuator_state to POWER_DOWN
+    
+    Set the default state of actuator to POWR_DOWN
+    during actuator probe.
+    
+    Change-Id: I86fe4fb8692e4d080863c52a5939ab494b47d428
+    Signed-off-by: Rajesh Bondugula <rajeshb@codeaurora.org>
+
+commit 0cd03411b11e6a189417eedad3bcff284cb65c6e
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Thu Jun 19 14:11:15 2014 -0700
+
+    msm: camera: sensor: populate addr type of registers in actuator
+    
+    populate address type of registers which will be written in
+    actuator init function
+    
+    Change-Id: I013b61baab1605191c28d7131be7904db7585581
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit 3065f83c7234c762a05f03aa68d373b67226d0f3
+Merge: 8fe9294 1c2eb71
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri Jun 27 05:28:53 2014 -0700
+
+    Merge "msm: camera: sensor: compare init_setting_size with correct define"
+
+commit 9e6db36d1896cc036ed2ae81314d29a33c4d2732
+Author: Evgeniy Borisov <eborisov@codeaurora.org>
+Date:   Thu Jun 19 14:40:37 2014 +0300
+
+    msm: camera: sensor: Fix for lens parking
+    
+    Skip lens parking if current lens position
+    is invalid or actuator_parse_i2c_params is
+    non-initialized.
+    
+    Change-Id: I3d1be86bb4f599dd313498433c763a031ae47bcc
+    Signed-off-by: Evgeniy Borisov <eborisov@codeaurora.org>
+
+commit 1c2eb71561fb9ac381d683f397e20400274acdec
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Wed Jun 18 21:22:20 2014 -0700
+
+    msm: camera: sensor: compare init_setting_size with correct define
+    
+    compare actuator init_setting_ size with correct define to
+    prevent discarding of initial settings
+    
+    Change-Id: I103413e148cfbacfdd8c90617fc1eadd2502e0b7
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit 80b01d0b816905f6d78e06337dbeec6cded8e255
+Author: Evgeniy Borisov <eborisov@codeaurora.org>
+Date:   Thu Jun 19 14:38:24 2014 +0300
+
+    msm: camera: sensor: Initialize actuator state
+    
+    Set valid actuator state after driver probe.
+    
+    Change-Id: If62eaffc6764211bddc82b73d8b8e0bdac1845a7
+    Signed-off-by: Evgeniy Borisov <eborisov@codeaurora.org>
+
+commit 3d82fb03ce561f305b773de041ff025e4d674757
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Mon Jun 9 19:18:45 2014 -0700
+
+    msm: camera: sensor: add lens park func for HVCM actuator type
+    
+    enable lens parking functionality for HVCM actuator type
+    
+    Change-Id: I68de25f1aa1ac377927cc67254d3cce41e7896ee
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit 98fc74a705320de03df01f452974de43fb07aad8
+Merge: 33aaa73 5324cf2
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri Jun 6 18:54:35 2014 -0700
+
+    Merge "msm: camera: Add support for actuator_ois driver type"
+
+commit 935110458c08ca7054f5f913272cf7b4c4408f37
+Merge: 58c7f8c 41afac3
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Jun 5 16:38:49 2014 -0700
+
+    Merge "msm: camera: sensor: Add park lens functionality"
+
+commit 5324cf2f34949101787fa4063b27cd815bbe9772
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Mon Apr 28 16:54:45 2014 +0300
+
+    msm: camera: Add support for actuator_ois driver type
+    
+    Add support for actuator_ois driver type
+    
+    Change-Id: Ia599cee8ac139834030f5109fbf899ec74b28070
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit c3d7ece917c8ec5e2d719a781b9b24a0f8e1ddf9
+Merge: 387d725 ee4ad1a
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Wed Jun 4 07:09:04 2014 -0700
+
+    Merge "msm: camera: sensor: Add flag for valid lens position"
+
+commit 41afac38580d6ab2936e59e9bad081ea92db970f
+Author: Evgeniy Borisov <eborisov@codeaurora.org>
+Date:   Wed May 14 14:30:16 2014 +0300
+
+    msm: camera: sensor: Add park lens functionality
+    
+    Move actuator's lens to DAC position 0 before power
+    down to avoid tick sound.
+    
+    Change-Id: I69bae3b4310b5145dbeabe363e91c43166e2c312
+    Signed-off-by: Evgeniy Borisov <eborisov@codeaurora.org>
+
+commit 74e7370b67c888c4e10ae8ab14bdf75e6750a1c1
+Merge: a06bf3e 1dd90d7
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri May 23 06:39:14 2014 -0700
+
+    Merge "msm: camera: Add dynamic logging feature in camera"
+
+commit ee4ad1a6fb2d55067d1151393299ab21ff597917
+Author: Evgeniy Borisov <eborisov@codeaurora.org>
+Date:   Wed May 14 11:58:06 2014 +0300
+
+    msm: camera: sensor: Add flag for valid lens position
+    
+    Put this flag to false after actuator init or power
+    operations. This fix also the first reset lens call.
+    
+    Change-Id: If36eec440a8b96d2d2ffae5ce698c15741d8dd74
+    Signed-off-by: Evgeniy Borisov <eborisov@codeaurora.org>
+
+commit 1dd90d7164ea47a57c12607a7e58bc65744183f0
+Author: Yiduo Wang <yiduow@codeaurora.org>
+Date:   Tue May 13 23:23:06 2014 -0700
+
+    msm: camera: Add dynamic logging feature in camera
+    
+    Change pr_warn and pr_warning to pr_debug and
+    define CDBG as pr_debug to support dynmaic logging feature.
+    
+    Change-Id: I98f8b203d15b8df9fb2e65e5f4c63f1bec41a853
+    Signed-off-by: Yiduo Wang <yiduow@codeaurora.org>
+
+commit bf395bba28459822c345a5948eb05b86f99ed1c3
+Author: Rajesh Bondugula <rajeshb@codeaurora.org>
+Date:   Thu May 8 13:32:18 2014 -0700
+
+    msm: camera: sensor: Enable actuator in compat mode.
+    
+    Send proper ioctl number and argument to actuator.
+    Add appropriate voltage values for the actuator.
+    
+    Change-Id: I7753c034921089721f676f89b73ffb1d32b1c8a1
+    Signed-off-by: Rajesh Bondugula <rajeshb@codeaurora.org>
+
+commit 450f1af6a4afd0e1cf10dca113a8f63c7102b91d
+Author: Rajesh Bondugula <rajeshb@codeaurora.org>
+Date:   Wed Apr 9 17:43:48 2014 -0700
+
+    msm: camera: sensor: Add compat ioctl support in sensor drivers
+    
+    Add compat ioctl support in actuator and flash drivers so that
+    32 bit userpsace ioctl calls are directed to proper ioctl handler
+    functions in those drivers.
+    
+    Change-Id: Ia987900078fa2d36212dc9df63d553c4a44bd3da
+    Signed-off-by: Rajesh Bondugula <rajeshb@codeaurora.org>
+
+commit 0f96a1641ee1daf81061e987862294bc2b69cac2
+Merge: bade16f 99881c1
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Mar 13 19:39:57 2014 -0700
+
+    Merge "msm-camera: Assign NULL after freeing memory"
+
+commit bdcdd233ae3169cd9b80adba4fd6e340aa391a19
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Tue Mar 11 17:05:27 2014 +0200
+
+    msm: camera: bugfix in actuator_init_focus func
+    
+    bugfix in actuator_init_focus func added break
+    after write/poll case
+    
+    Change-Id: I0362481fb7f4664da313670bf2187aa5e168ae6a
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit 99881c161e531fcefc1c88d13320ed5cfa5a961c
+Author: Raghu DP <dp.raghu@codeaurora.org>
+Date:   Tue Mar 11 17:55:13 2014 +0530
+
+    msm-camera: Assign NULL after freeing memory
+    
+    In msm_actuator we need to assign memory
+    pointer to  NULL after freeing that memory
+    using kfree.
+    
+    CRs-Fixed: 621818
+    
+    Change-Id: I54a9b9a2ff913a795c0089c996a8415c64bdd5d5
+    Signed-off-by: Raghu DP <dp.raghu@codeaurora.org>
+
+commit 966118a169f9f5f46af76bc2a2dd76e974bc9ef6
+Author: Rajesh Bondugula <rajeshb@codeaurora.org>
+Date:   Tue Feb 11 11:24:02 2014 -0800
+
+    msm: camera: Sensor specific I2C speed implementation.
+    
+    I2C frequency selection is done based on requested frequency.
+    Added 100Khz, 400Khz and custom needed options.
+    
+    Change-Id: Ibb639923472f0d1f5c3d9c5de11b65270a1f111f
+    Signed-off-by: Rajesh Bondugula <rajeshb@codeaurora.org>
+
+commit 65c91f4ebcbb047b22bc7817a9966d0b7368c0e5
+Author: Evgeniy Borisov <eborisov@codeaurora.org>
+Date:   Mon Dec 16 15:22:23 2013 +0200
+
+    msm: camera: Adding interface for power operations in actuator driver
+    
+    Support for actuator power operation.
+    - add vreg data parsing from property.
+    - add interface for power up and down.
+    
+    Change-Id: I809e23e27d119635e85b565fa6ea2f045b2afdc1
+    Signed-off-by: Evgeniy Borisov <eborisov@codeaurora.org>
+
+commit 100dfff0aec546bd2f71ca6cdef97de20465510c
+Merge: 8275b30 cf46be8
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri Jan 31 18:06:15 2014 -0800
+
+    Merge "msm: camera: Format specifier correction"
+
+commit d76ef2528bb29394805c174ef53d4b32c5839ea6
+Merge: 9c6389a 5908ad5
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Jan 30 07:19:51 2014 -0800
+
+    Merge "msm: camera2: Add api to support  manual auto focus"
+
+commit cf46be808211775336104a261faf61ac0f6084bb
+Author: Deepak Kaushal <dkaushal@codeaurora.org>
+Date:   Tue Jan 21 16:20:02 2014 -0800
+
+    msm: camera: Format specifier correction
+    
+    Fixing format specifiers in Sensor code
+    
+    Change-Id: I32ff3e8031b4f85c14809f4ad846823bf9866beb
+    Signed-off-by: Deepak Kaushal <dkaushal@codeaurora.org>
+
+commit 5908ad5f6143e51d953e9661cc0c58dfad81c2de
+Author: Yonggui Mao <yongguim@codeaurora.org>
+Date:   Wed Nov 13 01:00:15 2013 -0800
+
+    msm: camera2: Add api to support  manual auto focus
+    
+    Add support to manually control actuator by directly
+    setting the lens position.
+    
+    Change-Id: Idec86177abc265c38fd48e18d1320c5ae40b7f03
+    Signed-off-by: Yongui Mao <yongguim@codeaurora.org>
+    Signed-off-by: Deepak Kurien <dkurien@codeaurora.org>
+
+commit b9a05a130fdd20bfcc88a3aa497f675817415ff5
+Merge: cf45961 4989b00
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sun Jan 26 10:30:31 2014 -0800
+
+    Merge "msm: camera: cleanup debug prints"
+
+commit 4989b00f121a37d7c1a5e96e343f0af529ce5b64
+Author: Rajesh Bondugula <rajeshb@codeaurora.org>
+Date:   Tue Jan 21 14:18:05 2014 -0800
+
+    msm: camera: cleanup debug prints
+    
+    Used proper format specifiers and made sure
+    that line dont exceed 80 characters.
+    
+    Change-Id: I71a709ad74b24776315faac74b112ff93bb14529
+    Signed-off-by: Rajesh Bondugula <rajeshb@codeaurora.org>
+
+commit 3153956d8623d76a5cde56ea75fce30643f90027
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Mon Oct 21 11:40:11 2013 -0700
+
+    msm: camera: extend reg_settings_t structure
+    
+    extend reg_settings_t structure to be able
+    to add more functionality in actuator driver
+    like poll and delay between two write
+    i2c transactions because some actuator
+    drivers need of this operations
+    
+    Change-Id: I792d1757e53c62f2eeef73d1b97f5e5b7ad13b1c
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit da024dad05658b48c0c748dbe8fcbc81a5ad5a02
+Author: Xu Han <hanxu@codeaurora.org>
+Date:   Wed Oct 9 13:32:31 2013 -0700
+
+    msm: camera: Add actuator state
+    
+    Add support to track actuator powerup/powerdown state.
+    Avoid powerdown twice.
+    
+    Change-Id: I61a4e1b49c3798adb550febc591cbc6982524dfc
+    Signed-off-by: Xu Han <hanxu@codeaurora.org>
+
+commit 574c92aef7ed06c1800addd6b0383f0c590550eb
+Author: Xu Han <hanxu@codeaurora.org>
+Date:   Wed Oct 9 13:12:10 2013 -0700
+
+    msm: camera: Enable power down for actuator
+    
+    The actuator needs to power down during the deinit session.
+    Add support to handle the power down.
+    
+    Change-Id: I7712668df9ae64abcd9c94f93fe5599e34a3b0cc
+    Signed-off-by: Xu Han <hanxu@codeaurora.org>
+
+commit 3becfbefef47bd67a0e687d7d592b51adfaeeebe
+Merge: 4b2d5f3 18d76df
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Mon Oct 14 16:17:00 2013 -0700
+
+    Merge "msm: camera: Return current lens position in actuator driver"
+
+commit 6903aa416c1f37f9de0284e37d301972b78a8c55
+Merge: 7179e76 2fb303d
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri Oct 11 14:42:26 2013 -0700
+
+    Merge "msm: actuator: fix to prevent kernel heap buffer overflow"
+
+commit 18d76dfa1ee3de42bf18c9090c3f5860dad95630
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Wed Oct 9 16:46:57 2013 -0700
+
+    msm: camera: Return current lens position in actuator driver
+    
+    Actuator user space driver requires lens position after move focus
+    call returns. Return lens position as part cfg params for move focus
+    ioctl.
+    
+    Change-Id: Ie684e898959a8edfd2a919b69d4607497b998ac4
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+
+commit 2fb303d9c6ca080f253b10ed9384293ca69ad32b
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Tue Oct 8 10:50:32 2013 -0700
+
+    msm: actuator: fix to prevent kernel heap buffer overflow
+    
+    fix to prevent kernel heap buffer overflow allows user
+    controlled data to be written to the heap via the
+    msm_camera actuator IOCTLs
+    
+    Change-Id: I4458831e28e0081fb2f5ae55506be866100e1b4f
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit f0c0112a6189747a3f24f20210157f9974477e03
+Author: Vasko Kalanoski <vaskok@codeaurora.org>
+Date:   Fri Oct 4 15:28:34 2013 +0300
+
+    msm: actuator: fix to prevent untrusted pointer to lead DoS
+    
+    fix to prevent untrusted userspace pointer in actuator kernel
+    driver to lead DoS
+    
+    Change-Id: I1b64270deb494530d268539e7b420be5ec79b658
+    Signed-off-by: Vasko Kalanoski <vaskok@codeaurora.org>
+
+commit 332f2ffd9cde793eb2526b4de4766f0cce30319c
+Merge: 373e01fa 2e57a46
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Wed Sep 18 02:38:15 2013 -0700
+
+    Merge "msm: camera: Fix various small issues in Actuator driver"
+
+commit 2e57a46ab2ba7299d99d9cdc1382bd1e612963fb
+Author: Hariram Purushothaman <hpurus@codeaurora.org>
+Date:   Wed Jul 24 10:42:21 2013 -0700
+
+    msm: camera: Fix various small issues in Actuator driver
+    
+    Bound check and validate userspace parameters direction,
+    number of steps and direction sign. Also fix possible
+    memory leak in certain error cases.
+    
+    CRs-Fixed: 511349
+    Change-Id: Icaa324468574494fb40f2de78e522090806744cb
+    Signed-off-by: Hariram Purushothaman <hpurus@codeaurora.org>
+
+commit b0a529963ce3c4c1556e8d171d7b410358a92f8d
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Mon Aug 19 16:10:01 2013 -0700
+
+    msm: camera: Reset CCI core based on I2C MASTER
+    
+    CCI core is used by camera sensor, actuator and EEPROM. CCI core gets
+    reset first time when either one of hardware modules initializes it.
+    But, as per hardware requirement sensor has to be powered up before
+    CCI can be reset. This imposes limitation in the sequence in which
+    camera is opened. To remove this limitation, initialize CCI core
+    only for corresponding I2C MASTER everytime either of the hardware
+    modules initilizes it.
+    
+    Change-Id: If2d7cc26fe23533243714839e6375f73d5efd4f2
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+
+commit a467396600eb6e167501d52dc83534765321ee7c
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Mon Jul 22 09:37:20 2013 -0700
+
+    msm: camera: Change CCI I2C write interface
+    
+    Every CCI I2C write involves one I2C transaction to CCI core.
+    Since CCI queue has maximum of 64 words, Write CCI commands
+    to CCI core and handle it in hardware.
+    
+    Change-Id: Ic3b03bf70b1a5a23d4bdd42d2cbf8528fa8bd413
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+
+commit 6dc141c7d7a6f4ae891a6b385b9489a12cd0e384
+Author: Lokesh Kumar Aakulu <lkumar@codeaurora.org>
+Date:   Thu May 2 15:42:24 2013 -0700
+
+    msm: camera: Add support for actuator on 8x10
+    
+    Add support for actuator probe as i2c device
+    and update correct sub device id to identify
+    from userspace.
+    
+    Change-Id: Icce1602b23b06ed96b93b039854133d764648af2
+    Signed-off-by: Lokesh Kumar Aakulu <lkumar@codeaurora.org>
+
+commit abcc2e5a5e605d1dc34c2b06435e792fc1bc05c2
+Author: Evgeniy Borisov <eborisov@codeaurora.org>
+Date:   Mon May 27 04:49:17 2013 -0700
+
+    msm: camera_v2: Free actuator i2c tbl memory
+    
+    Function msm_actuator_init() is called multiple
+    times and we need to free i2c_reg_tbl first to
+    avoid leaking the associated memory.
+    
+    Change-Id: I3360be781c31df713be270fb172e1ef13537e613
+    Signed-off-by: Evgeniy Borisov <eborisov@codeaurora.org>
+
+commit ec798b4bbd471590a0b5420bf1440a436e8154c8
+Author: Evgeniy Borisov <eborisov@codeaurora.org>
+Date:   Thu May 23 04:17:18 2013 -0700
+
+    msm camera2: Free actuator i2c register table memory
+    
+    Free i2c_reg_tbl in msm_actuator_close() to avoid
+    leaking the associated memory.
+    
+    Change-Id: I6f2c46dff2e4730af6e6968b69561b6f3a415a79
+    Signed-off-by: Evgeniy Borisov <eborisov@codeaurora.org>
+
+commit 5a9adbb8407e7fbafcf413f576dc273afe2a5b69
+Author: Ankit Premrajka <ankitp@codeaurora.org>
+Date:   Wed May 1 17:02:17 2013 -0700
+
+    msm: camera_v2: handle subdev releases when qcamera daemon crashes.
+    
+    When the daemon crashes, all the subdevs need to be released in a
+    specific order to ensure proper clean-up. This change creates
+    an ordered list of the subdevs during individual registrations,
+    based on their close sequences, and uses this list to make the release
+    subdev calls.
+    
+    Change-Id: Ic95e53d88ba84f13b9db26f820822ed68dca48dc
+    Signed-off-by: Ankit Premrajka <ankitp@codeaurora.org>
+
+commit 5ba1d2733aa496952004258369db5ac1ca83da44
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Mon Mar 18 00:11:02 2013 -0700
+
+    msm: camera: Multiple instance support for actuator driver
+    
+    As per current actuator architecture, only one instance is supported in
+    platform since acutuator control structure is static. Allocate memory
+    for every actuator probe to support more than one instance in platform.
+    
+    Change-Id: I8fa22726e2832a358388f2a944ef757b694a4601
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+
+commit 32dab88724fbe78c1bb0bf5073e3c045f0073761
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Sat Jan 26 21:26:13 2013 -0800
+
+    msm: camera: Add actuator driver
+    
+    Add actuator driver that is responsible to move the actuator lens
+    for auto focus functionality. Register platform driver and create
+    v4l2 subdevice during probing. Add config functions for power up,
+    power down and move focus.
+    
+    Change-Id: Icabf5dbd88fa64ea0a007834ffdd7a2b81eae567
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+    [smuckle@codeaurora.org: backported from msm-3.7]
+    Signed-off-by: Steve Muckle <smuckle@codeaurora.org>

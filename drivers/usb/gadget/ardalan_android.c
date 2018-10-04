@@ -26,7 +26,7 @@
 #include <linux/platform_device.h>
 #include <linux/pm_qos.h>
 #include <linux/of.h>
-//Charm
+//Ardalan
 #include <linux/prints.h>
 
 #include <linux/usb/ch9.h>
@@ -42,9 +42,7 @@
 #ifdef CONFIG_SND_PCM
 #include "f_audio_source.c"
 #endif
-#ifdef CONFIG_SND_RAWMIDI
 #include "f_midi.c"
-#endif
 #include "f_mass_storage.c"
 #define USB_ETH_RNDIS y
 #include "f_diag.c"
@@ -94,10 +92,11 @@ static const char longname[] = "Gadget Android";
 #define PRODUCT_ID		0x0001
 
 #define ANDROID_DEVICE_NODE_NAME_LENGTH 11
+
 /* f_midi configuration */
 #define MIDI_INPUT_PORTS    1
 #define MIDI_OUTPUT_PORTS   1
-#define MIDI_BUFFER_SIZE    1024
+#define MIDI_BUFFER_SIZE    256
 #define MIDI_QUEUE_LENGTH   32
 
 struct android_usb_function {
@@ -1906,6 +1905,8 @@ static int
 mtp_function_init(struct android_usb_function *f,
 		struct usb_composite_dev *cdev)
 {
+	//Ardalan
+	PRINTK0("[1]");
 	return mtp_setup();
 }
 
@@ -1918,6 +1919,8 @@ static int
 mtp_function_bind_config(struct android_usb_function *f,
 		struct usb_configuration *c)
 {
+	//Ardalan
+	PRINTK0("[1]");
 	return mtp_bind_config(c, false);
 }
 
@@ -1945,6 +1948,8 @@ static int mtp_function_ctrlrequest(struct android_usb_function *f,
 					struct usb_composite_dev *cdev,
 					const struct usb_ctrlrequest *c)
 {
+	//Ardalan
+	PRINTK0("[1]\n");
 	return mtp_ctrlrequest(cdev, c);
 }
 
@@ -1952,6 +1957,8 @@ static int ptp_function_ctrlrequest(struct android_usb_function *f,
 					struct usb_composite_dev *cdev,
 					const struct usb_ctrlrequest *c)
 {
+	//Ardalan
+	PRINTK0("[1]\n");
 	return mtp_ctrlrequest(cdev, c);
 }
 
@@ -2661,6 +2668,8 @@ static struct android_usb_function mass_storage_function = {
 static int accessory_function_init(struct android_usb_function *f,
 					struct usb_composite_dev *cdev)
 {
+	//Ardalan
+	PRINTK0("[1]\n");
 	return acc_setup();
 }
 
@@ -2669,17 +2678,42 @@ static void accessory_function_cleanup(struct android_usb_function *f)
 	acc_cleanup();
 }
 
+//Ardalan start
+//int charm_agent_init2(void);
+int hecaton_delayed_init(void);
+//Ardalan end
+
 static int accessory_function_bind_config(struct android_usb_function *f,
 						struct usb_configuration *c)
 {
-	return acc_bind_config(c);
+	//Ardalan start
+	////return acc_bind_config(c);
+	int ret;
+	PRINTK0("[1]");
+	ret = acc_bind_config(c);
+	//charm_agent_init();
+	return ret;
+	//Ardalan end
 }
+
+//Ardalan
+//int acc_counter = 0;
 
 static int accessory_function_ctrlrequest(struct android_usb_function *f,
 						struct usb_composite_dev *cdev,
 						const struct usb_ctrlrequest *c)
 {
-	return acc_ctrlrequest(cdev, c);
+	//Ardalan start
+	////return acc_ctrlrequest(cdev, c);
+	int ret;
+	PRINTK0("[1]");
+	ret = acc_ctrlrequest(cdev, c);
+	//acc_counter++;
+	//PRINTK0("[2]: acc_counter = %d", acc_counter);
+	//if (acc_counter == 14)
+	//	charm_agent_init();
+	return ret;
+	//Ardalan end
 }
 
 static struct android_usb_function accessory_function = {
@@ -2734,8 +2768,7 @@ static ssize_t audio_source_pcm_show(struct device *dev,
 	struct audio_source_config *config = f->config;
 
 	/* print PCM card and device numbers */
-	return snprintf(buf, PAGE_SIZE,
-			"%d %d\n", config->card, config->device);
+	return sprintf(buf, "%d %d\n", config->card, config->device);
 }
 
 static DEVICE_ATTR(pcm, S_IRUGO, audio_source_pcm_show, NULL);
@@ -2801,7 +2834,6 @@ static struct android_usb_function uasp_function = {
 	.bind_config	= uasp_function_bind_config,
 };
 
-#ifdef CONFIG_SND_RAWMIDI
 static int midi_function_init(struct android_usb_function *f,
 					struct usb_composite_dev *cdev)
 {
@@ -2855,7 +2887,7 @@ static struct android_usb_function midi_function = {
 	.bind_config	= midi_function_bind_config,
 	.attributes	= midi_function_attributes,
 };
-#endif
+
 static struct android_usb_function *supported_functions[] = {
 	&ffs_function,
 	&mbim_function,
@@ -2882,11 +2914,9 @@ static struct android_usb_function *supported_functions[] = {
 #ifdef CONFIG_SND_PCM
 	&audio_source_function,
 #endif
+	&midi_function,
 	&uasp_function,
 	&charger_function,
-#ifdef CONFIG_SND_RAWMIDI
-	&midi_function,
-#endif
 	NULL
 };
 
@@ -3009,6 +3039,10 @@ android_bind_enabled_functions(struct android_dev *dev,
 			return ret;
 		}
 	}
+	//Ardalan start
+	//accessory_function_init(NULL, NULL);
+	//accessory_function_bind_config(NULL, c);
+	//Ardalan end
 	return 0;
 }
 
@@ -3153,10 +3187,6 @@ functions_show(struct device *pdev, struct device_attribute *attr, char *buf)
 	return buff - buf;
 }
 
-
-//Charm
-int charm_agent_init2(void);
-
 static ssize_t
 functions_store(struct device *pdev, struct device_attribute *attr,
 			       const char *buff, size_t size)
@@ -3168,22 +3198,27 @@ functions_store(struct device *pdev, struct device_attribute *attr,
 	struct android_usb_function_holder *f_holder;
 	char *name;
 	char buf[256], *b;
+	//Ardalan
+	//char buf2[256];
 	char aliases[256], *a;
 	int err;
 	int is_ffs;
 	int ffs_enabled = 0;
 
-	//Charm start
+	//Ardalan start
+	//strlcpy(buf2, buff, sizeof(buf2));
 	if(!strncmp(buff, "charm", 5)) {
-		PRINTK5("[0.1]");
-		charm_agent_init2();
+		PRINTK0("[0.1]");
+		hecaton_delayed_init();
 		return size;
 	} 
-	//Charm end
+	//Ardalan end
 
 	mutex_lock(&dev->mutex);
 
 	if (dev->enabled) {
+		//Ardalan
+		PRINTK0("[0.2]: buff = %s", buff);
 		mutex_unlock(&dev->mutex);
 		return -EBUSY;
 	}
@@ -3203,16 +3238,17 @@ functions_store(struct device *pdev, struct device_attribute *attr,
 	}
 
 	strlcpy(buf, buff, sizeof(buf));
-	//Charm start
-	PRINTK5("[1]: buf = %s", buf);
+	//Ardalan start
+	PRINTK0("[1]: buf = %s", buf);
 
-	//if(!strcmp(buf, "mtp,adb")) {
-	if(!strcmp(buf, "adb")) {
+	if(!strcmp(buf, "mtp,adb")) {
 		strlcpy(buf, "mtp,adb,accessory", sizeof("mtp,adb,accessory"));
-		PRINTK5("[1.1]: buf = %s", buf);
+		PRINTK0("[1.1]: buf = %s", buf);
 	} 
-	//Charm end
+	//Ardalan end
 	b = strim(buf);
+	//Ardalan
+	PRINTK0("[2]: b = %s", b);
 
 	dev->cdev->gadget->streaming_enabled = false;
 	while (b) {
@@ -3265,6 +3301,8 @@ functions_store(struct device *pdev, struct device_attribute *attr,
 							name, err);
 		}
 	}
+	//Ardalan
+	//android_enable_function(dev, conf, "accessory");
 
 	/* Free uneeded configurations if exists */
 	while (curr_conf->next != &dev->configs) {
@@ -3658,6 +3696,8 @@ android_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *c)
 			}
 		}
 
+	//Ardalan
+	//accessory_function_ctrlrequest(f, cdev, c);
 	/*
 	 * skip the  work when 2nd set config arrives
 	 * with same value from the host.

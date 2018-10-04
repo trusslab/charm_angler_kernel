@@ -1,0 +1,2394 @@
+commit 61da6ad55b89626e83fc25d9b1f5648273f3b324
+Author: Dennis Cagle <d-cagle@codeaurora.org>
+Date:   Thu May 4 15:58:31 2017 -0700
+
+    msm: camera2: cpp: Fix out-of-bounds frame or command buffer access
+    
+    When user application provides invalid (out of range) stripe size and
+    stripe indices, while submitting  requests for the stripe based image
+    processing by the CPP kernel driver, the driver could  perform out of
+    bounds access of the internal buffers.
+    
+    This fix ensures that stripe size and indices of frame/command buffer
+    are properly validated during the configuration and before processing
+    such requests through the CPP hardware block.
+    
+    Bug: 34620535
+    CRs-fixed: 2002207
+    Change-Id: Ib79e36fb507d8e75d8fc28afb990020a0e1bf845
+    Signed-off-by: Ravi kumar Koyyana <rkoyyana@codeaurora.org>
+    Signed-off-by: Dennis Cagle <d-cagle@codeaurora.org>
+
+commit a22dd9325893917dd4c401ac5b5980197590ae23
+Author: Dennis Cagle <d-cagle@codeaurora.org>
+Date:   Tue Mar 14 10:49:35 2017 -0700
+
+    msm: camera: cpp: Fixing Heap overflow in output buffer
+    
+    Issue:
+    Missing bound check when writing into the output array
+    buffer, which can lead to out-of-bound heap write.
+    
+    Fix:
+    Addding hardcoded constant 8 in the MSM_OUTPUT_BUF_CNT
+    macro and size check to the place where the array is
+    accessed. Returning '0' if exceeds MSM_OUTPUT_BUF_CNT.
+    Caller will return -EINVAL for '0'.
+    
+    Bug: 34621613
+    Change-Id: Ic03f86e3e47ece9ca7069527e741a75ad9a0f83f
+    CRs-Fixed: 2004036
+    Signed-off-by: Pratap Nirujogi <pratapn@codeaurora.org>
+    Signed-off-by: Dennis Cagle <d-cagle@codeaurora.org>
+
+commit 286718100676c5488be1a20069087a6c215393f5
+Author: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+Date:   Wed Nov 16 18:22:58 2016 -0800
+
+    msm: cpp: Fix for buffer overflow in cpp.
+    
+    Fix for buffer overflow while handling ioctl.
+    Instead of checking for length boundary, fix checks
+    for exact length.
+    
+    CRs-Fixed: 518731
+    Bug: 32709702
+    Change-Id: I9002f84b219e8b06ae0672d87c2d999e728a75aa
+    Signed-off-by: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+
+commit 4d25122563533787235e75afef9b9a147fd77840
+Author: Biswajit Paul <biswajitpaul@codeaurora.org>
+Date:   Fri Dec 9 09:55:00 2016 -0800
+
+    msm: cpp: Fix for integer overflow in cpp
+    
+    Due to integer overflow, the bound check in config frame function
+    may pass and this may allow user to access invalid buffer. This
+    fix takes care of proper bound and don't allow integer overflow.
+    
+    Bug: 32919951
+    CRs-Fixed: 1097709
+    Change-Id: I504ad591633afaba82268b5ee27a321691d75c80
+    Signed-off-by: Kumar Behera <mohanb@codeaurora.org>
+    Signed-off-by: Biswajit Paul <biswajitpaul@codeaurora.org>
+
+commit 06c94436a0e3d3f50b111af829f02809456c52fc
+Author: Siqi Lin <siqilin@google.com>
+Date:   Tue Oct 11 10:58:48 2016 -0700
+
+    BACKPORT: msm: camera: Avoid exposing kernel addresses
+    
+    Usage of %p exposes the kernel addresses, an easy target to
+    kernel write vulnerabilities. With this patch currently
+    %pK prints only Zeros as address. If you need actual address
+    echo 0 > /proc/sys/kernel/kptr_restrict
+    
+    Bug: 29464815
+    CRs-Fixed: 987011
+    Change-Id: Ieded0296301ef0935f0b685d1d0eb878a52d6b05
+    Signed-off-by: Azam Sadiq Pasha Kapatrala Syed <akapatra@codeaurora.org>
+    Signed-off-by: Siqi Lin <siqilin@google.com>
+    
+    (cherry-picked from commit 3a214ef870dc97437c7de79a1507dfe5079dce88)
+
+commit 451c251797067ebdf8f7d4811fc83ece81c84c74
+Author: Siqi Lin <siqilin@google.com>
+Date:   Mon Oct 10 16:15:33 2016 -0700
+
+    BACKPORT: msm: camera: cpp: Add validation for v4l2 ioctl arguments
+    
+    In CPP v4l2 ioctl command is made, if _IOC_DIR(cmd) is
+    _IOC_NONE, then the user-supplied argument arg is not checked
+    and an information disclosure is possible
+    
+    Bug: 29464815
+    CRs-Fixed: 1042068
+    Change-Id: Ibcd0c4d6605ecdabe4f720aaf47366dbd7503ad1
+    Signed-off-by: Sunid Wilson <sunidw@codeaurora.org>
+    Signed-off-by: Biswajit Paul <biswajitpaul@codeaurora.org>
+    Signed-off-by: Siqi Lin <siqilin@google.com>
+    
+    (cherry-picked from commit 35b674b22af887a05a1697c8518fd89b8cd87a3d)
+
+commit b2db6489ac592a7937dfb2963b5c86f3468c1a45
+Author: Biswajit Paul <biswajitpaul@codeaurora.org>
+Date:   Thu Sep 15 17:09:40 2016 -0700
+
+    msm: camera: cpp: Validate frame message before manipulating it.
+    
+    CPP frame message is used to send all frame data
+    to Microcontroller. It is sent every frame. CPP kernel
+    driver has to add information to it before transfer it.
+    The message has to be validated before manipulations.
+    If it is not valid the message and corresponding frame
+    are discarded.
+    
+    Bug: 30074605
+    CRs-Fixed: 1049826
+    
+    Change-Id: I3e11ca7f6df4bb0d928512f81f3e3dc40fed791a
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+    Signed-off-by: Biswajit Paul <biswajitpaul@codeaurora.org>
+
+commit a3aaf3d3ae8a170934e5bf7b336173c3591c6a3c
+Author: Ranjith Kagathi Ananda <ranjith@codeaurora.org>
+Date:   Thu Oct 8 23:32:08 2015 -0700
+
+    msm: camera2: cpp: Set v4l2_buffer error on micro timeout
+    
+    When CPP firmware/micro times out, it is detected after
+    300ms long after the time window to post bus message.
+    Set V4L2_QCOM_BUF_DATA_CORRUPT in the v4l2_buffer->flags
+    to indicate that the data in the buffer is invalid
+    and buf_done so that the buffer is returned to HAL instead
+    put_buf
+    
+    BUG=24134544
+    
+    Change-Id: Iba05a9c1afb4f8cf4ee5c8158c4e4c175968d4e4
+    Signed-off-by: Ranjith Kagathi Ananda <ranjith@codeaurora.org>
+
+commit fa30fd79de78269a28328d3bcea960f66221e4df
+Author: Mansoor Aftab <maftab@codeaurora.org>
+Date:   Thu Sep 3 22:43:14 2015 -0700
+
+    msm: camera2: cpp: Reload FW across usecases
+    
+    The FW retains old state across usecases, which results in
+    error behaviour. This change resets the FW state across
+    usecases to avoid the issue.
+    
+    Change-Id: Ibd920cb08caf79dd1c3f91fb4bd8cff96c6574fd
+    Signed-off-by: Sunid Wilson <rajakuma@codeaurora.org>
+    Signed-off-by: Mansoor Aftab <maftab@codeaurora.org>
+
+commit d6a0580f438c87e6d046d06de9a4b6279f93ef54
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Mon Jun 15 17:09:30 2015 -0700
+
+    msm: camera2: cpp: Support zero buffer streamon
+    
+    The streamon can be used without any buffer with support
+    for deferred buffer allocation.
+    
+    Change-Id: I9692d912f8748572a048811e04e610c89489447e
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+    Signed-off-by: Shuzhen Wang <shuzhenw@codeaurora.org>
+
+commit 69ac1de893c0daa24cef0a0874e737200079baef
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Fri Jun 19 23:23:19 2015 -0700
+
+    msm: camera2: cpp: Reduce latency in open node
+    
+    The MICRO block reset can be much shorter that current value.
+    The firmware version read can be done once during file name assocciation.
+    The firmware binary need not be dynamically loaded.
+    
+    Change-Id: I42c706d278a9fc81d538d4172f7f286d5744c487
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 768448ddea9ef6c8e42fa134c266b545bad775d8
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Wed Jul 1 16:14:45 2015 -0700
+
+    msm: camera2: cpp: adjust poll time
+    
+    The current poll value is very high in the order of ms. The
+    MICRO is capable of handling commands faster than current
+    delay between each poll read. This change optimize the latency
+    between each poll read to be in the order of microseconds.
+    
+    Change-Id: I866cca1ea0642461979c51bd7391a147df457674
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit d869853c6231be8c78b2b8d9e9871a36cd63fefb
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Tue Jun 2 13:17:54 2015 -0700
+
+    msm: camera2: cpp: Validate user pointer access for IOCTLs
+    
+    The payload for IOCTLs from compat mode need to be properly
+    copied to kernel using correct 32-bit/64-bit data structures.
+    This can avoid accessing invalid address when IOCTLs are invoked
+    with non-NULL invalid address.
+    
+    Change-Id: Ifc53309aaf67663208e28c2fd4b6d5db484e49b5
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+    Signed-off-by: Ajay Dudani <adudani@codeaurora.org>
+
+commit 55021c9404de94493ad1433c497ada901bd41f80
+Author: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+Date:   Sat Jun 27 18:19:01 2015 -0700
+
+    msm: cpp: Synchronize user thread and firmware timeout sequence
+    
+    If sub device node shutdown is triggered due to daemon crash while
+    firmware has timed out and reload is in progress a device crash
+    is observed. The shutdown sequence cleans up the cpp node and
+    causes an invalid access in timeout function causing device crash.
+    Synchronize user thread and firmware timeout sequence.
+    
+    Change-Id: Ie0c68fe768035296350387df1ab88de90b74a688
+    Signed-off-by: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+    Signed-off-by: Ajay Dudani <adudani@codeaurora.org>
+
+commit 05a8b3a77d01ae24c357d2d3ee91167d8867fe46
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Tue Feb 24 14:03:15 2015 -0800
+
+    msm: camera2: cpp: Set correct levels for printk messages
+    
+    The log messages printed per frame can cause heavy hogging
+    of system dmesg print resulting in watch dog timeout. The
+    clock table query is expected to give error after the
+    last entry. This needs to be set as debug level message.
+    This change handles correct levels for printk messages.
+    
+    Change-Id: I6fc53a13767667f6221cacacd6dd33d3c6e3bfe4
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 705cb0c316f77015969d0e58ab89b9d6e738f528
+Merge: 6382af8 f10c46e
+Author: Ajay Dudani <adudani@codeaurora.org>
+Date:   Fri May 22 07:27:11 2015 -0700
+
+    Merge remote-tracking branch 'remotes/quic/LA.BF64.1.2.1' into HEAD
+    
+    Change-Id: I27d7bfbac68b40413f8a8805afe90c04fc220133
+    Signed-off-by: Ajay Dudani <adudani@codeaurora.org>
+
+commit 949bf93ecb8d7caddb61c90b7dd2bcedd88a03a2
+Merge: e2aafce eb7c07b
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu May 21 19:53:59 2015 -0700
+
+    Merge "msm: camera2: cpp: Reset payload for VIDIOC_MSM_CPP_GET_EVENTPAYLOAD"
+
+commit 6382af82406f4db6b748ba9163bf21b8948fe288
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Mon May 18 11:27:08 2015 -0700
+
+    msm: camera2: cpp: Support VIDIOC_MSM_CPP_POP_STREAM_BUFFER compat mode
+    
+    The 32-bit / 64-bit compat mode support needs to be extended for
+    VIDIOC_MSM_CPP_POP_STREAM_BUFFER. This will result in invalid size of
+    data being copied from kernel to user.
+    
+    Change-Id: I1a7ed3b2d14db27506dea4b90eab356a804e7b7d
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit cf70d5c624df49fd08f9e5cbf694e54151551d8f
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Thu May 14 18:23:37 2015 -0700
+
+    msm: camera2: cpp: Reset payload for VIDIOC_MSM_CPP_GET_EVENTPAYLOAD
+    
+    In 32-bit / 64-bit compat mode, the kernel32 structure populated
+    manually from kernel64 structure. This kernel32 is copied directly
+    to user32 structure. Any padding in kernel32 is not set to 0. This
+    results in invalid data being copied to user32 structure.
+    
+    Change-Id: I58ae65bcbb32cd0f11127533d53f5a2d731032b2
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 26ba8cd0801a90d0562c0bf5e7afcab6319744a6
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Mon May 18 11:27:08 2015 -0700
+
+    msm: camera2: cpp: Support VIDIOC_MSM_CPP_POP_STREAM_BUFFER compat mode
+    
+    The 32-bit / 64-bit compat mode support needs to be extended for
+    VIDIOC_MSM_CPP_POP_STREAM_BUFFER. This will result in invalid size of
+    data being copied from kernel to user.
+    
+    Change-Id: I1a7ed3b2d14db27506dea4b90eab356a804e7b7d
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit eb7c07bc186df9969b8452b2d5a65c18e180e816
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Thu May 14 18:23:37 2015 -0700
+
+    msm: camera2: cpp: Reset payload for VIDIOC_MSM_CPP_GET_EVENTPAYLOAD
+    
+    In 32-bit / 64-bit compat mode, the kernel32 structure populated
+    manually from kernel64 structure. This kernel32 is copied directly
+    to user32 structure. Any padding in kernel32 is not set to 0. This
+    results in invalid data being copied to user32 structure.
+    
+    Change-Id: I58ae65bcbb32cd0f11127533d53f5a2d731032b2
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 56539eb7b538569d90d8d6f128d481a12c49464f
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Wed Apr 29 15:11:24 2015 -0700
+
+    msm: camera2: cpp: Support reschedule for timeout frame
+    
+    The timeout handler can conditionally support reschedule of
+    pending frames. This can help to avoid partial processed
+    frames being sent to HAL due to timeout.
+    
+    Change-Id: Ieb030a8aa34f337805c505c444571d331e9f57e9
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 3f2db7e8018a299cd20af727493673b9ab49cd3c
+Merge: e0f5c5c 054bd5b
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Wed May 6 02:49:12 2015 -0700
+
+    Merge "msm: camera2: cpp: Avoid stream count increment during delete buffer"
+
+commit 054bd5bceefb93db00623507147d10ce00db6e4f
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Tue Apr 28 21:50:46 2015 -0700
+
+    msm: camera2: cpp: Avoid stream count increment during delete buffer
+    
+    VIDIOC_MSM_CPP_DELETE_STREAM_BUFF should avoid calling a new queue
+    entry or incrementing the stream count. This will result in stream
+    count mismatch and future IOMMU attach failures. Such failure can
+    result in stream on failures in future streams.
+    
+    Change-Id: I1b3c3ed971348ac58bd90b8833c21bceac9062c8
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit eede812d2c5d2791a66f887fc6708765fd41bd9c
+Author: Shilpa Mamidi <shilpam@codeaurora.org>
+Date:   Fri Jan 23 16:05:33 2015 +0530
+
+    msm: cpp: Free pointer in error case
+    
+    Free pointers in error case and also add
+    check condition before using any parameters.
+    
+    Change-Id: I6328a2cb6e6a2f28f74be29b99e93de9819753c3
+    Signed-off-by: Shilpa Mamidi <shilpam@codeaurora.org>
+    Signed-off-by: Ajay Dudani <adudani@codeaurora.org>
+
+commit a1d19e8cc151be60fc3a688fd19a74cfd012f7af
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Tue Apr 14 16:59:52 2015 -0700
+
+    msm: cpp: Support CDS handling in queue buffer path
+    
+    Update buffer manager data structure with CDS information
+    in queue buffer path.
+    
+    Change-Id: Ia214d975256696a3bf38569f52d6719225bddb9e
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 6ccb36d69b23a0d19eaadb53131271f69e94299c
+Author: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+Date:   Thu Apr 9 20:02:13 2015 -0700
+
+    msm: cpp: Add missing error handling checks
+    
+    Free the firmaware pointer on error.
+    Free the command message and frame info if there is a copy
+    to user error.
+    Check for validity of length of ioctl pointer.
+    
+    Change-Id: Ife3f86dc450c496a11517f49727211ba92c0b2e3
+    Signed-off-by: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+
+commit 33ba495fd38384a87f5a3f59d3198f101902ddc5
+Merge: 4fe4c04 3005ca5
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sat Mar 28 23:26:29 2015 -0700
+
+    Merge "msm: cpp: Add error handling for invalid ioctl pointer"
+
+commit 3005ca5d0c4229333d177056e273bf500de7ce2d
+Author: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+Date:   Thu Mar 19 21:25:58 2015 -0700
+
+    msm: cpp: Add error handling for invalid ioctl pointer
+    
+    Invalid ioctl pointer part of compat ioctl can cause a crash. Add
+    error handling for invalid ioctl pointer.
+    
+    Change-Id: I5afe46a5d89854388186fa16d979dd2f1f788a84
+    Signed-off-by: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+
+commit 84d6cfb9df7919038e71f5d7a45ba3c49e2c18f8
+Author: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+Date:   Fri Mar 20 18:28:21 2015 -0700
+
+    msm: cpp: Do not free stripe info pointer allocated by backend
+    
+    Strip info pointer is allocated by backend and should be deallocated
+    by backend code. Also providing a invalid pointer results in a crash
+    during error scenarios.
+    
+    Change-Id: Ic58690cdd16ae91c268e7fe36cad3ec7c1000ce4
+    Signed-off-by: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+
+commit 877557aaf715fba18e112762be1fc188469ba1f9
+Merge: 776533e 9762c95
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri Mar 27 19:14:19 2015 -0700
+
+    Merge "msm: camera2: cpp: Setup timer once during probe"
+
+commit 4161b68ce9ece0538ce1efe83d998c3a444b3687
+Merge: e854bbf c6bd5f8
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri Mar 27 14:57:18 2015 -0700
+
+    Merge "msm: cpp: Update iommu handling"
+
+commit 9762c95b1adce7e54fcbae80b81639671c667c5f
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Thu Mar 12 16:54:54 2015 -0700
+
+    msm: camera2: cpp: Setup timer once during probe
+    
+    The setup_timer need not be called each and every time. We
+    can avoid it and use del_timer / mod_timer.
+    
+    Change-Id: If1116b04b97eac732508c309d685ce37fe9a957d
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 7c5302068c8c8be21776d8ead7c087e2d4f45666
+Author: Sagar Gore <sgore@codeaurora.org>
+Date:   Fri Feb 20 16:10:37 2015 -0800
+
+    msm: camera: cpp: Changes to support batch mode
+    
+    Support batch processing of buffers in CPP hardware.
+    Changes to parse through multiple buffers for CPP output.
+    Buffer manager will provide list of individual buffer index
+    via buf info struct, CPP driver will parse through all the
+    individual buffers to configure CPP firmware.
+    
+    Change-Id: If780d32aee68960e392a9f4a0ba6fb1b3ddb6358
+    Signed-off-by: Sagar Gore <sgore@codeaurora.org>
+
+commit ca5b28f16d8e7d4f1c91b287c8d3742e235cdb15
+Author: Hariram Purushothaman <hariramp@codeaurora.org>
+Date:   Fri Feb 6 13:52:05 2015 -0800
+
+    msm:camera: Adopt cpp and vpe to use buff type
+    
+    Adopt cpp and vpe to query the get buff from
+    generic buffer mngr based on the buffer type.
+    
+    Change-Id: I47b8a3305953b64871c43436ec521a7c8ecbe26b
+    Signed-off-by: Hariram Purushothaman <hariramp@codeaurora.org>
+
+commit c6bd5f886442ebc547be6c9688edf7ee2bef33b5
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Fri Mar 13 07:33:18 2015 -0700
+
+    msm: cpp: Update iommu handling
+    
+    CPP has to check for stream state before operate iommu
+    contexts.
+    
+    Change-Id: I69e6266e1ff2d1cd93e7191f2c43c887154abae0
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit fb949cf996e9e9f2cbf759573ae4d4b02e645805
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Wed Feb 25 15:57:22 2015 -0800
+
+    msm: camera2: cpp: Lock cpp timer operations
+    
+    CPP timer is used to notify process frame timeout. It is not
+    protected by any lock machanism and certain false operations
+    can occur. Spin lock is added to avoid undesired sequences
+    of timer modifications.
+    
+    Change-Id: I91d8aa7e2cd94d329ff209259fc7a41575282457
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 4b1dc325dab6ff5c35ff25608c850a9190478304
+Merge: aac867d 91963df
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sat Feb 28 13:06:59 2015 -0800
+
+    Merge "msm: camera: cpp: Avoid cpp frame access during error"
+
+commit aac867de8c5b177e3ff45c377c7674b3b605666c
+Merge: 08c3d4e e0100bc
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sat Feb 28 13:06:59 2015 -0800
+
+    Merge "msm: camera2: cpp: Enhance timeout handler for multi-frame processing"
+
+commit 08c3d4e694e986aa63298dd65782ad3bb7472e39
+Merge: 6385b9f 1121aaf9
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sat Feb 28 13:06:59 2015 -0800
+
+    Merge "msm: camera2: cpp: Partial frame processing for snapshot stream"
+
+commit 6385b9f3f0c6e41d4aa4ea95a4384583d71da744
+Merge: f56d9e5 b483b072
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sat Feb 28 13:06:58 2015 -0800
+
+    Merge "msm: cpp: Ad ubwc specific parameters to cpp driver"
+
+commit f56d9e55086afacecf2eeae2b1407474e2a3fb98
+Merge: b754a2a 297c22b
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sat Feb 28 13:06:58 2015 -0800
+
+    Merge "msm: cpp: Dump the payload before timer is started"
+
+commit 91963df676e2522344b7073d93e5c829584bd1b0
+Author: Sagar Gore <sgore@codeaurora.org>
+Date:   Tue Feb 24 11:33:52 2015 -0800
+
+    msm: camera: cpp: Avoid cpp frame access during error
+    
+    In case cpp frame configuration hits error, cpp frame data
+    should be cleaned up and invalid output buffer info need not be
+    communicated to userspace. Added changes to avoid access to
+    cpp frame data struct in error case.
+    
+    Change-Id: I6cf620fcd68f5055ff0e6f3d1a12bb468dafecc3
+    Signed-off-by: Sagar Gore <sgore@codeaurora.org>
+
+commit e0100bc14edc40d563820228fd5b70c9fd0d29ae
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Mon Feb 23 22:56:20 2015 -0800
+
+    msm: camera2: cpp: Enhance timeout handler for multi-frame processing
+    
+    The CPP driver can schedule multiple frames to achieve higher
+    performance. This results in multiple frames to be in pending state
+    in the driver. When timeout handler is invoked, the condition
+    of NACK and user event callbacks need to be sequeunced properly.
+    This change helps to serialize in such a way that the timeout
+    handler is allowed to complete the frame notification before any
+    user event callback is handled.
+    
+    Change-Id: Ie883b1823000085094e39f4c0ae7e10a3d377d16
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 1121aaf9f8fba755106d49bbbe671b6f2aa445a0
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Fri Jan 30 21:53:00 2015 -0800
+
+    msm: camera2: cpp: Partial frame processing for snapshot stream
+    
+    The snapshot stream can be processed in partial scheme. This will
+    help to support seemless realtime stream processing.
+    
+    Change-Id: I22004fae91f370d3a74b4ee39dd071b1afe448eb
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit b483b072d4535cc3070f712d55869e5ea06eb5b6
+Author: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+Date:   Thu Feb 5 17:10:54 2015 -0800
+
+    msm: cpp: Ad ubwc specific parameters to cpp driver
+    
+    Add feature mask to frame info to check the features that are enabled.
+    Add ubwc specific parameters and update the parameters based on feature
+    mask. The parameter added is metadata pointer.
+    
+    Change-Id: I9f4458f0af91daf3a25fcf64c27f53ce6af5d34e
+    Signed-off-by: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+
+commit 297c22b4fe3f32e7fb7800137480160669103f7c
+Author: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+Date:   Thu Feb 5 16:44:24 2015 -0800
+
+    msm: cpp: Dump the payload before timer is started
+    
+    The frame is dumped after the time is started. This results in time out
+    and incorrect payload as dump routing takes more time. Dump the payload
+    before the timer is started.
+    
+    Change-Id: Ibf4d57f367209a89a48e2437e83a63b41820ceda
+    Signed-off-by: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+
+commit 127926e6ce3894b9cd0e75238969804c3fdb34d1
+Author: Shilpa Mamidi <shilpam@codeaurora.org>
+Date:   Fri Jan 23 16:05:33 2015 +0530
+
+    msm: cpp: Free pointer in error case
+    
+    Free pointers in error case and also add
+    check condition before using any parameters.
+    
+    Change-Id: I1c2fa6d8712b95673b30fe0fab517b54da736792
+    Signed-off-by: Shilpa Mamidi <shilpam@codeaurora.org>
+
+commit bd2d0cb9b7169308710f8978cfccb50b153f0bb2
+Merge: bbbf11a 123be51
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sat Feb 21 20:27:09 2015 -0800
+
+    Merge "msm: camera2: cpp: Extend interface for partial frames"
+
+commit 123be51988e5a74a32161945c1a4e9ccc17950b2
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Tue Feb 17 22:55:07 2015 -0800
+
+    msm: camera2: cpp: Extend interface for partial frames
+    
+    The interface structures for partial frame processing needs
+    to be added in current frame structure. This change will
+    add necessary members so that userspace driver can make
+    use of this interface to schedule a partial frame payload.
+    This is an extension to existing interface so the same can
+    be used for full frame payload.
+    
+    Change-Id: Ibadd01ea952504a1ee4e387997554c6725dde43a
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 4d0727b78f11c8e14602e6c48d2b4815d466d90c
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Fri Feb 13 11:59:15 2015 -0800
+
+    msm: camera2: cpp: Check IOMMU status before processing frame
+    
+    The CPP HW can use invalid address if the IOMMU status is
+    improper. The frame command needs to be issued only if there
+    is valid IOMMU state.
+    
+    Change-Id: I74fb7faf25088d76b5e21c9c53eabb7306f2d264
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit a7a7cd2be0f3d9a73adfe255050d838f57f77f8b
+Author: Shilpa Mamidi <shilpam@codeaurora.org>
+Date:   Mon Nov 17 16:45:23 2014 +0530
+
+    msm: cpp: Handling GET_INST_INFO ioctl for 64 bit kernel
+    
+    Added support to handle VIDIOC_MSM_CPP_GET_INST_INFO for
+    64 bit kernel
+    
+    Change-Id: If1468e4bf4dc3f6a981bd3bf799c72fd02718608
+    Signed-off-by: Shilpa Mamidi <shilpam@codeaurora.org>
+
+commit a4bffefa3304a71f44ed63c45b74689594213ad4
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Wed Jul 2 04:24:19 2014 -0700
+
+    msm: cpp: Add bus client to cpp driver
+    
+    In all platforms till msm8936, CPP driver uses ISP's
+    bus client to update bus bandwidth. The main reason
+    is that CPP does not have bus master. In platforms
+    msm8936 and msm8994 it has its own bus master, defined
+    as MSM_BUS_MASTER_CPP. In order to use it, CPP driver
+    has to define its own bus client and operate with it.
+    
+    Change-Id: I11c62ec9ef52a17f1c177984d4aca3b8c73fe468
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+    Signed-off-by: Shilpa Mamidi <shilpam@codeaurora.org>
+    [imaund@codeaurora.org: Resolved context conflicts]
+    Signed-off-by: Ian Maund <imaund@codeaurora.org>
+
+commit 60d64a7bed87d534fa71a72a78bf602b340a71a0
+Merge: 719b853 5294881
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Wed Feb 4 00:35:01 2015 -0800
+
+    Merge "msm: cpp: Increase the count of queued frames to HW to 2"
+
+commit 4ee0129286e9e875bb4d5dbc56c6f32c75b44dbb
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Thu Jan 22 20:20:04 2015 -0800
+
+    msm: camera2: cpp: Use firmware version specific offsets
+    
+    The firmware version can be used to determine different
+    offsets to be used for payload updates. This helps in
+    unifying the code needed for same functionaliy in
+    different firmware versions.
+    
+    Change-Id: Icdd0d7c054f87ddcd66c109f1356733faf4e05fe
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 52948811d0676328648e2ff840d6fd37f6406ae9
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Thu Nov 20 09:43:26 2014 -0800
+
+    msm: cpp: Increase the count of queued frames to HW to 2
+    
+    CPP hardware can handle two request for process sent one after
+    another. We need to chnage the logic in CPP kernel driver to
+    support this option.
+    
+    Change-Id: I4e0e47f839d5db79e42cb733fcf331ce59e65996
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 69c6d9e47d2ed3d7ae530cf5f00c23e5974ca945
+Author: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+Date:   Mon Jan 19 15:36:52 2015 -0800
+
+    msm: cpp: Fix mem leak when frame is dropped
+    
+    When a frame is dropped or during error scenarios frame info
+    structure is not de-allocated. The fix is to free the frame info
+    structure after the payload is de-allocated.
+    
+    Change-Id: Ia804364a01b6bda1d525cd8cc265ecd1aa0b229f
+    Signed-off-by: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+
+commit e47fb02004587f496a96d921258e05ed4cadd360
+Author: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+Date:   Mon Jan 19 15:32:33 2015 -0800
+
+    msm: cpp: Fix issue in updating frame info pointer in compact ioctl
+    
+    The userspace pointer is directly accessed/de-referenced in kernel
+    space. This causes device crash during camera stability runs. Copy
+    the v4l2ioctl and cpp frame info userspace pointer to kernel space
+    and access/update the individual data.
+    
+    Change-Id: I23360571dcfa5c7a1fba16d58cb503316914d17b
+    Signed-off-by: Krishnankutty Kolathappilly <kkolatha@codeaurora.org>
+
+commit d3a66f780e7e2ebdef8680b297064fd249dba457
+Author: Punit Soni <punits@codeaurora.org>
+Date:   Wed Dec 3 15:37:44 2014 -0800
+
+    msm: camera: add min clock rate limit in cpp
+    
+    The CPP driver needs to set the core clock to minimum
+    rate. This will help run the CPP HW at low latency
+    to avoid pipeline delay related issues in the stack.
+    
+    Change-Id: I8189ed3288b9a9fa5f4a3d5725f838821e31c6bd
+    Signed-off-by: Punit Soni <punits@codeaurora.org>
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 36404182eeee28647b90b1d2a9ab3f07d5e3a668
+Merge: 18bb205 29a663c
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri Dec 19 20:38:16 2014 -0800
+
+    Merge "msm: camera: cpp: Ignore TNR buffer for 8992"
+
+commit 29a663c218f37206a8399704fbc2d91b11da245b
+Author: Nagesh Subba Reddy <nageshsreddy@codeaurora.org>
+Date:   Mon Dec 8 14:56:20 2014 -0800
+
+    msm: camera: cpp: Ignore TNR buffer for 8992
+    
+    The temporal scratch buffers are needed only when
+    the TNR is enabled. Add check for TNR, to skip buffer update
+    
+    Change-Id: I02063a9d1d5d320fd6ced80e74789e67615e535c
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 6fd1cb4faec67badc70602fc2734121c16803d3a
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Sat Dec 6 14:53:48 2014 -0800
+
+    msm: camera: cpp: Add support for 8992
+    
+    Add support for CPP version for 8992. The iommu
+    context for cpp in msm8992 is cpp_0.
+    
+    Change-Id: I0374a255bffc6677d377f17412869bfabaac6d4c
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 94e04ce13ab5f198ce68912cfa43860147f1dfec
+Merge: e0d7b24 2ed01e9
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Dec 11 19:49:34 2014 -0800
+
+    Merge "msm: camera2: cpp: support write engine disable"
+
+commit e0d7b24df48da483516a1d1884d166405db7abd1
+Merge: 5f51cb4 9db2de2
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Dec 11 19:49:32 2014 -0800
+
+    Merge "msm: cpp: Update reserved field to handle cds"
+
+commit 2ed01e95ac9fc9003e6704f37ea087b25aa655f2
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Tue Nov 11 22:01:04 2014 -0800
+
+    msm: camera2: cpp: support write engine disable
+    
+    The write engines are always enabled by default when a frame
+    is schedule for processing in the CPP hardware. This change
+    supports processing of frames without enabling write engine.
+    This helps to update reference buffers but not the output
+    buffers.
+    
+    Change-Id: Ie89f40d778887597850e7a3c86ad0fcb6d64358c
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 9db2de2feefdf58b4cce4374850cb51ca6a2b15d
+Author: Krishnankutty Kolathappilly <kkolat@codeaurora.org>
+Date:   Tue Nov 11 11:08:52 2014 -0800
+
+    msm: cpp: Update reserved field to handle cds
+    
+    The reserved field needs to be properly copied over.
+    This will ensure the V4L2 buffer will send the information
+    to the client properly.
+    
+    Change-Id: I46a8814449f03f2664103ba8d2843f636a4cb42c
+    Signed-off-by: Krishnankutty Kolathappilly <kkolat@codeaurora.org>
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit e2da088f6d29add506aabec9b03cf4b19215ebd5
+Author: Krishnankutty Kolathappilly <kkolat@codeaurora.org>
+Date:   Wed Nov 26 15:09:01 2014 -0800
+
+    msm: cpp: Update Active state mismatch in case of append buffer
+    
+    Append buffer is called for reference buffers in case of TNR.
+    This can cause state mismatch.
+    
+    Change-Id: I8615ecbe37f18cac7e828260516de1aa4adb1809
+    Signed-off-by: Krishnankutty Kolathappilly <kkolat@codeaurora.org>
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 7c386aebc438c20e2a0fdae744b07642794810f0
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Wed Nov 5 09:42:49 2014 -0800
+
+    msm: cpp: Complete compat handling of buffer delete call
+    
+    When compat is used all IOCTL calls have compat handlers
+    which transfer data from 32 bit user space to 64bit kernel
+    space. After this transfer is done a new subdev call is
+    done with the 64bit data. To complete this subdev call all
+    IOCTL calls have to be listed.
+    
+    Change-Id: I89770111804344ec3615d52ec466b81392932652
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 7ca7f182a4b52c409de5e364d1b44693389ddbf9
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Sun Aug 24 19:06:37 2014 -0700
+
+    msm: camera2: cpp: support deletion of mapped buffer entry
+    
+    The CPP driver needs to support dynamic deletion of mapped
+    buffer when the stream is still active. This helps to flush
+    old mapped buffer entries from interferring in buffers which
+    reuse the buffer indices.
+    
+    Change-Id: Ibe7379d3e5fa6c14890173eaf613b241630623ef
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit d52c796dc4421089a07a471c1a4ce34ba89906da
+Merge: de80e0b e86478f
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Wed Oct 22 01:04:17 2014 -0700
+
+    Merge "cpp: Add error handling for invalid frame length in cpp frame info"
+
+commit 2115554428c84c10e97af7fd5262277fc42b6a78
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Wed Oct 15 05:24:52 2014 -0700
+
+    msm: cpp: Initialize timer before use it
+    
+    CPP module uses timer to detect hardware timeout. This
+    timer has to be initialized with init_timer API() before
+    use. It has to be deleted only after initialization.
+    Calling delete_timer() API twice can cause error.
+    
+    Change-Id: I752286e0dd74cbbc220f425210f239a903068f4d
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit e86478fe0469e9467f02359143b815d65812ded5
+Author: Krishnankutty Kolathappilly <kkolat@codeaurora.org>
+Date:   Mon Oct 13 23:00:14 2014 -0700
+
+    cpp: Add error handling for invalid frame length in cpp frame info
+    
+    There will be overflow if message length in cpp frame info is big value.
+    Add error check to prevent integer overflow.
+    
+    Change-Id: I869adf87dfbd18f4182571e1b4eb17e7a130e15c
+    Signed-off-by: Krishnankutty Kolathappilly <kkolat@codeaurora.org>
+
+commit 87109532eb982399140dc6a007f3344d7d7ef2b5
+Author: Cherian Deepak <dcheri@codeaurora.org>
+Date:   Tue Sep 16 16:47:27 2014 -0700
+
+    msm: camera2: cpp: to silence non-fatal errors
+    
+    In the kernel logs we were printing a error
+    message, when stream queue is not available
+    while we enqueue buffer to stream queue.This is
+    not fatal as we will create the new queue and continue.
+    Hence we are not printing it as a error message.
+    
+    Change-Id: I674c8aa9b729fde715fbdc0f688efb03ed3455c9
+    Signed-off-by: Cherian Deepak <dcheri@codeaurora.org>
+
+commit 2b1cbf6aba983d2839c9823697984f2b2f8f0c6d
+Author: Krishnankutty Kolathappilly <kkolat@codeaurora.org>
+Date:   Wed Sep 3 21:29:10 2014 -0700
+
+    msm: cpp: Return error values in cpp_init_hardware
+    
+    Zero(no error) is returned from cpp_init_hardware funtion during
+    certain error condition. Fix is to return error value during error
+    conditions.
+    
+    Change-Id: Ifd302e5cfdddd54b3cf074c42bf70dbcb6306119
+    Signed-off-by: Krishnankutty Kolathappilly <kkolat@codeaurora.org>
+
+commit ffd5ae48809e6455411254c65ef5edc0053ee3f3
+Merge: 4627f3d dbd895a
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Sep 4 02:35:55 2014 -0700
+
+    Merge "msm: camera: cpp: Fix queue buffer compat handling"
+
+commit 00314afef5eded8cdcd7102e571536272162b9b6
+Merge: 403906a 8325e80
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Sep 4 02:35:23 2014 -0700
+
+    Merge "msm: isp: Add support to display additional stats via debugfs"
+
+commit dbd895ad1fea79aa59c988b2dad11395bc8be5ab
+Author: Gjorgji Rosikopulos <grosik@codeaurora.org>
+Date:   Thu Aug 28 19:14:04 2014 +0300
+
+    msm: camera: cpp: Fix queue buffer compat handling
+    
+    Compat handling for queue buffer was incomplete,
+    session id, stream id, buffer index adn frame id
+    were not converted. Also support for internal
+    copy instead of copy from user was missing for
+    this ioctl.
+    
+    Change-Id: Id3d586a68fc78537d9523caa637d78430242c94e
+    Signed-off-by: Gjorgji Rosikopulos <grosik@codeaurora.org>
+
+commit 8325e80f955a987e3a916e98f839f54d7c690755
+Author: Seemanta Dutta <seemanta@codeaurora.org>
+Date:   Fri Aug 15 16:50:30 2014 -0700
+
+    msm: isp: Add support to display additional stats via debugfs
+    
+    Currently, only overflow counts are shown in the ISP driver via
+    a debugfs node. To enhance this:
+    
+    1) Show additional bandwidth statistics in the existing
+    debugfs node.
+    
+    2) Add a new debugfs node in the driver to collect bus bandwidth
+    request history. Use a circular buffer to maintain this information.
+    
+    3) Add another new debugfs node to show the unified buffer information.
+    Having this information in a debugfs node is very useful to debug bus
+    overflow scenarios in camera.
+    
+    Change-Id: I005e75b6def0ee7e5fbfb7b2e877ed5d5a36f2d0
+    Signed-off-by: Seemanta Dutta <seemanta@codeaurora.org>
+
+commit 7ba60c08db2c9e5faf836b3d20b21a104ec3827a
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Tue Aug 19 22:50:12 2014 -0700
+
+    msm: camera2: cpp: fix to release duplicate buffer
+    
+    The CPP driver can support scheduling of two output frames
+    in duplication mode. In the event of error, in case first
+    output buffer is acquired, it needs to be released back to
+    free queue. If is it not released, the acquired buffer will
+    never be used for circulation and gets lost.
+    
+    Change-Id: I7891586b6c8902b4a1301627f22c3c7ec429d025
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 60bccb2945be053381eb9a7ccb753f8cb0e2c5d1
+Merge: b013b68 2a1e284
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sat Aug 16 09:59:27 2014 -0700
+
+    Merge "msm: cpp: Fix reported issues in CPP driver"
+
+commit 2a1e284e93576a8e780274bdb9cd48224bb1ec05
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Thu Jul 17 08:48:49 2014 -0700
+
+    msm: cpp: Fix reported issues in CPP driver
+    
+    These issues can cause NULL pointer dereferencing.
+    They are found during code scan and need to be
+    fixed.
+    
+    Change-Id: I79e49e5aa5463eacea4e1f4eade30817f2a08212
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 482f1cf5514db1264334695b24dffedb095b1fc2
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Mon Aug 11 01:52:44 2014 -0700
+
+    msm: cpp: Create buffer queue only if it is missing
+    
+    When CPP kernel driver receives IOCTL command
+    VIDIOC_MSM_CPP_ENQUEUE_STREAM_BUFF_INFO it crates new
+    queue for the current stream. If such command is received
+    more than once, CPP driver will create more than one queue.
+    To avoid this, it will check first, whether the queue is
+    not already created and allocate it if necessary.
+    
+    Change-Id: I1eebb32cecb9a0a9a9d4e821ea946df6803ec5a0
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 5eb3494915e6d9dfd400aa961aeeb69194a76a0f
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Fri Aug 8 08:02:24 2014 -0700
+
+    msm: cpp: Add TNR scratch buffer info in compat handler
+    
+    Compat handler transfers data from 32 bit user space to
+    64 but kernel space. All parameters have to be handled.
+    TNR scratch buffer info also needs to be transfered
+    correctly from one memory space to the other.
+    
+    Change-Id: Iae30e099f1b32a2cc128c324c3e7805a525d1ad2
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 581b4ef231dd598a2957b6cf7ac1bd6ead1186fc
+Merge: 0758113 305ea9c
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Jul 31 06:00:21 2014 -0700
+
+    Merge "msm: cpp: Add compat handlers for SET_CLOCK and GET_HW_INFO ioctl calls"
+
+commit 305ea9ce713d39f1167b450bbac04e0f2617b6b7
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Tue Jul 22 09:34:26 2014 -0700
+
+    msm: cpp: Add compat handlers for SET_CLOCK and GET_HW_INFO ioctl calls
+    
+    Every IOCTL call needs proper handling in case of 32bit userspace
+    connected to 64 kernel. GET_HW_INFO and SET_CLOCK ioctl calls
+    use parameters which have different size in the userspace and
+    kernel memory spaces. A translation from userspace to kernel
+    memory space and vice versa is needed.
+    
+    Change-Id: I7035d49a7643a5894603c5bd09e64b1d5497b8e8
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 0f99d50b3fccc1cb9ae574700d7cd4732e1ea52f
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Mon Jul 21 13:58:54 2014 -0700
+
+    msm: camera2: cpp: support delayed append of buffer in COMPAT
+    
+    The COMPAT mode needs to be supported for existing IOCTL,
+    VIDIOC_MSM_CPP_APPEND_STREAM_BUFF_INFO. This will avoid errors
+    in COMPAT mode when the corresponding IOCTL is invoked.
+    
+    Change-Id: I1b8d5a7ef4532bdf9265874dee50905ad4ac9908
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit b0c2274b13a0487e72e57342a842a99a15149fb9
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Thu Jun 19 20:03:00 2014 -0700
+
+    msm: cpp: Validate frame message before manipulating it
+    
+    CPP frame message is used to send all frame data
+    to Microcontroller. It is sent every frame. CPP kernel
+    driver has to add information to it before transfer it.
+    The message has to be validated before manipulations.
+    If it is not valid the message and corresponding frame
+    are discarded.
+    
+    Change-Id: Id272eb2296233c66befd015f41f19a9fbc551572
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit db63d99b5a78a95f59f125b680776921858e71e6
+Author: Suresh Vankada <svankada@codeaurora.org>
+Date:   Thu Jun 19 11:45:11 2014 +0530
+
+    msm: camera2: Add support in cpp driver for HW version 4.1.1
+    
+    This change additionally removes work around done for FW bug.
+    So Added support in CPP driver for HW version.
+    
+    Change-Id: Ie6084015863fb0a4117af470a6073b661b899047
+    Signed-off-by: Suresh Vankadara <svankada@codeaurora.org>
+
+commit 833192e6b9971bafd7f898ab503c89d633a6f99f
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Fri May 16 08:07:26 2014 -0700
+
+    msm: cpp: Provide cpp clock frequency table to user-space
+    
+    CPP clock frequency table varies form platform to platform.
+    It have to be read and sent to user-space for cpp dynamic
+    clock calculation. It is done during GET_HW_INFO IOCTL
+    call. In result user-space sends current cpp clock rate
+    and bandwidth to be set up.
+    
+    Change-Id: I56be2642c782062496fc11e48964e93fae179ada
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit a5210f79cac52db510521f7e7f838705f33752b1
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Wed Jun 4 20:27:31 2014 -0700
+
+    msm: cpp: Change CPP IOMMU contex name according dtsi
+    
+    MSM8994 IOMMU dtsi defines the contex which cpp have to
+    use. CPP driver have to use the same contex name as the
+    one specified in the dtsi.
+    
+    Change-Id: Ida87210dcd4ee39494f6ab6a61290aec8de1afe9
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 3600587821ce3d9db23aa949e0d30dfe2fbe8d96
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Tue Jun 3 20:24:50 2014 -0700
+
+    msm: cpp: Fix compat code error
+    
+    Some IOCTL calls needs special treatment in case of
+    compat. The compat code shpuld not brake the functionality
+    of the ioctl function itself.
+    
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+    Change-Id: If5fb2121fd484dbf740a565e0a63189423eef798
+
+commit 6d9fcf20170d5d7bdf5be79961b8a35865fe04c3
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Thu Jun 5 13:30:32 2014 -0700
+
+    msm: cpp: Retrieve clock index from dtsi clock name
+    
+    The clock used to enable cpp hadware can be different
+    for the different platform. To get the indexes od the
+    clock that are set by cpp driver, we have to use their
+    names. The only requirement is that these clocks have
+    to be called with the same names accross the platforms.
+    
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+    Change-Id: I8a4612cd0ae227dad0e2538af64ea75da64f35f2
+
+commit be0bab8a164e58d895a12a408216f898cc649986
+Merge: cd98361 a5bf7a1
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri May 30 03:04:25 2014 -0700
+
+    Merge "msm: camera_v2: cpp: Fix data types in cpp structures"
+
+commit 61b82c2113fdc8e54b0b0a985a486a0a50562644
+Author: Mitchel Humpherys <mitchelh@codeaurora.org>
+Date:   Tue Apr 29 11:02:14 2014 -0700
+
+    ion: msm: remove superfluous function argument
+    
+    msm_ion_client_create doesn't actually do anything with its heap_mask
+    parameter. Remove it. Also remove the extra argument from an audio
+    function that wraps msm_ion_client_create.
+    
+    The following semantic patch was used to generate this patch:
+    
+        @@
+        expression E1, E2;
+        @@
+    
+        msm_ion_client_create(
+        -       E1,
+                E2)
+    
+        @@
+        expression E1, E2;
+        @@
+    
+        msm_audio_ion_client_create(
+        -       E1,
+                E2)
+    
+    Change-Id: I403a125a1715b29a3db1f27c993abe0bc6d3fb11
+    Signed-off-by: Mitchel Humpherys <mitchelh@codeaurora.org>
+
+commit a5bf7a15875aa0c7e6ba03d8448f7a55bd2f9944
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Tue Feb 4 02:10:31 2014 -0800
+
+    msm: camera_v2: cpp: Fix data types in cpp structures
+    
+    Data types should have to be well defined. Otherwise conflicts
+    and problems can occure when code is compiled for different
+    platforms and toolchains.
+    
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+    Change-Id: I508fddedb7df02a39770c2e30ef19b6800938360
+
+commit c1a0aee8a1c7151c69ed871bd546f0b1d6d08ce1
+Merge: f50e22a 2f06aa6
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Mon May 19 18:46:52 2014 -0700
+
+    Merge "msm:cpp: Add support for MSM8994 in CPP driver"
+
+commit f7c3ccb50a7469c59d622433fa0beb5d30ff0024
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Fri Apr 11 11:07:39 2014 -0700
+
+    msm: camera: Check IOCTL input data for NULL pointer
+    
+    The argument of the IOCTL function is checked for NULL, but
+    the pointer that is used to get the data is not checked. This may
+    cause NULL pointer dereferencing.
+    
+    Change-Id: I2c732cf9f0d26095685f2119fb60ddb74298ffb9
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+    Signed-off-by: Hody Hung <hhung@codeaurora.org>
+
+commit 2f06aa66817f6ef5c2edcdaa44783f0b64295a61
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Tue Mar 25 17:07:09 2014 -0700
+
+    msm:cpp: Add support for MSM8994 in CPP driver
+    
+    CPP in platform MSM8994 has new features and engines.
+    It supports temporal noise reduction. It needs two
+    additional buffers. They are used as ping pong buffers.
+    CPP driver have to be changed so it can support them.
+    The frame message is also different and corresponding
+    chnages must be done.
+    
+    Change-Id: I33bef7b0e01675abd1edf963355592e146e290bb
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 313f1e7f027b7d3398c015fcb62ddc6f593c6d15
+Merge: 4768283 17d6e97
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sun May 11 06:43:36 2014 -0700
+
+    Merge "msm: camera: fix iommu deinit sequence in cpp"
+
+commit ca7cc6acbe91ed4e6c14890d050869d2d5fc216f
+Merge: 5a9809d 9a27c83
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri May 9 19:07:42 2014 -0700
+
+    Merge "msm: camera2: cpp: Add compat ioctl support for IOMMU attach/detach"
+
+commit 17d6e9765d7a481cff71f971f9af2898004a84d8
+Author: Punit Soni <punits@codeaurora.org>
+Date:   Wed May 7 18:17:23 2014 -0700
+
+    msm: camera: fix iommu deinit sequence in cpp
+    
+    IOMMU memory needs to be unmapped and freed before device_detach and
+    iommu_destroy calls. This sequence needs to be fixed in cpp_close_node
+    call.
+    
+    CRs-fixed: 639281
+    Change-Id: I65644cb83a42ebe508963eb48c130caa7f708ab8
+    Signed-off-by: Punit Soni <punits@codeaurora.org>
+
+commit 9a27c83b9bb17165d6a7e2119c28d324c35782b8
+Author: Seemanta Dutta <seemanta@codeaurora.org>
+Date:   Wed May 7 16:11:22 2014 -0700
+
+    msm: camera2: cpp: Add compat ioctl support for IOMMU attach/detach
+    
+    Add compat ioctl support for IOMMU attach and detach ioctls so that
+    these ioctls are supported for 64bit compatibility mode as well.
+    
+    Change-Id: I22d9e1037e1a6ca56320b0e75270a222b7f73524
+    Signed-off-by: Seemanta Dutta <seemanta@codeaurora.org>
+
+commit 44110b57b966d4f484aabb982978c93b5fa5ccf6
+Author: Krupal Divvela <kdivvela@codeaurora.org>
+Date:   Mon May 5 15:44:25 2014 +0530
+
+    msm: cpp: wait for RX fifo to be empty
+    
+    RX fifo is of 512 length. After 512 write
+    wait till RX fifo is empty
+    
+    CRs-fixed: 656133
+    Change-Id: I5460bdf9078ee0bc9726611f7e1b0e7549c81358
+    Signed-off-by: Krupal Divvela <kdivvela@codeaurora.org>
+
+commit 1b147aebcee5a2c302632a25b8f23267df0aaf0b
+Merge: a586fcf a28192b
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu May 1 02:24:10 2014 -0700
+
+    Merge "msm: camera: cpp: Fix cpp ioctl errors"
+
+commit a28192b2f9027e94061b00bcf145ef51c03fb60b
+Author: Seemanta Dutta <seemanta@codeaurora.org>
+Date:   Tue Apr 22 14:04:48 2014 -0700
+
+    msm: camera: cpp: Fix cpp ioctl errors
+    
+    Fix the following two issues:
+    
+    1. Copying error in case of 64bit compat mode caused by
+    calling copy_from_user() over a kernel space address.
+    Fix this by calling memcpy() in case of 64bit compat mode.
+    
+    2. Invalid length caused by passing size of 32bit
+    compat structure from user space. Fix this by patching
+    up the size of the argument to its 64bit counterpart.
+    
+    Change-Id: I704e7535fe9a9f72b31427e3121beb77056979c8
+    Signed-off-by: Seemanta Dutta <seemanta@codeaurora.org>
+
+commit 2e596ae6081f921af74750f297033df7f4e89718
+Merge: a63dd87 4f8de5b
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Apr 24 03:49:00 2014 -0700
+
+    Merge "msm: camera2: cpp: Add IOMMU Attach and Detach IOCTL for cpp"
+
+commit 7978794ff60d50314287f8c3ba798c1722da14d0
+Author: Vivek Veenam <vveenam@codeaurora.org>
+Date:   Thu Mar 27 20:24:45 2014 +0530
+
+    mm-camera: Remove qcom,clocks from all device dtsi
+    
+    We're moving from qcom,clock-names because clock-names has been
+    accepted in upstream as property name, so we need to migrate our
+    usage to use this name.
+    
+    CRs-Fixed: 631800
+    Change-Id: Id40407b04fc6b77100327f2817aa13b5dffc065f
+    Signed-off-by: Vivek Veenam <vveenam@codeaurora.org>
+
+commit 4f8de5b0c6a5a7fc9db743a5bd57743e9d5288ec
+Author: Lakshmi Narayana Kalavala <lkalaval@codeaurora.org>
+Date:   Mon Apr 21 11:59:03 2014 -0700
+
+    msm: camera2: cpp: Add IOMMU Attach and Detach IOCTL for cpp
+    
+    Add new IOCTL for IOMMU attach and detach for cpp, So it
+    can be called in stream ON/OFF to avoid multiple attach
+    in secure camera use case
+    
+    Change-Id: I94427a9dab84e52d6c36820fe6061734edd41ea9
+    Signed-off-by: Azam Sadiq Pasha Kapatrala Syed <akapatra@codeaurora.org>
+    Signed-off-by: Lakshmi Narayana Kalavala <lkalaval@codeaurora.org>
+
+commit 39b4eba21fda1a8635e4e3a98e205ffef4a49be9
+Author: Seemanta Dutta <seemanta@codeaurora.org>
+Date:   Tue Apr 15 17:46:21 2014 -0700
+
+    msm: camera: cpp: Fix ioctl handler to return correct status
+    
+    Fix the msm_cpp_subdev_fops_compat_ioctl() function so that it
+    returns the proper status.
+    
+    Change-Id: I95f12b9f6b18a406b79e1dec79422f3c7ed834dd
+    Signed-off-by: Seemanta Dutta <seemanta@codeaurora.org>
+
+commit 3cb4ba1a3820b23c7a130d0d2509be692b099efd
+Merge: ae8c239 cc30e3a
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Tue Apr 15 12:56:37 2014 -0700
+
+    Merge "msm: camera: Add compat ioctl changes for cpp"
+
+commit cc30e3a330f7c86c239fd16d3ed2cb898b1e30f3
+Author: Lakshmi Narayana Kalavala <lkalaval@codeaurora.org>
+Date:   Mon Feb 10 16:44:24 2014 -0800
+
+    msm: camera: Add compat ioctl changes for cpp
+    
+    Add additional ioctls in cpp driver to maintain the
+    code compatibility across 32 bit and 64 bit address
+    space appliations
+    
+    Change-Id: Icea63779877d20849561e31a15cc84cdec14a830
+    Signed-off-by: Lakshmi Narayana Kalavala <lkalaval@codeaurora.org>
+
+commit d241ea5075bd1849dce97628731248c9eeda32ad
+Merge: 3c27b82 e9bd5b1
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri Apr 11 23:29:29 2014 -0700
+
+    Merge "msm: camera2: cpp: Support queue and timer clean up."
+
+commit e89bede2d0e93abe3915045f00ddae61fa83a078
+Author: Figo Wang <figow@codeaurora.org>
+Date:   Mon Mar 31 19:08:02 2014 +0800
+
+    msm: camera2: cpp: Remove the reinstallation of cpp_timer
+    
+    when msm_cpp_do_timeout_work is running, it's possible that the
+    cpp_timer is pending again. So if we setup this timer in the work
+    again, it will initialize the timer list entry without any
+    synchronization. If other context is accessing the global timer
+    list, it will found one of the node being corrupted. And finally
+    system crashes. Actually we don't need to reinstall the timer
+    because the callback function and private data don't change at all.
+    
+    Change-Id: I84487a6c599427e4b6a96ef4e947e8c1d85115b6
+    CRs-Fixed: 637802
+    Signed-off-by: Figo Wang <figow@codeaurora.org>
+
+commit e9bd5b1d03cd6c50579cea8182b91468b33493ec
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Mon Mar 3 15:35:37 2014 -0800
+
+    msm: camera2: cpp: Support queue and timer clean up.
+    
+    The timer callback is triggered after the node shutdown under
+    some error conditions. The timer callback should be avoided
+    in such cases. If in some race condition the timer callback is
+    triggered then it needs to check the state before timeout
+    processing.
+    
+    Change-Id: Ic5663c69f556f30592ff6eb20f99c7c4a5ac859d
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 9755bc3c7b99e47c2d2cd61a0e6c32c1b6bc7dcd
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Fri Feb 14 07:02:57 2014 -0800
+
+    msm: cpp: Add dynamic clock setup
+    
+    The CPP load depends on the frame resolution, which is
+    processed. CPP clock can vary depending on the load. Thus
+    the system can be relaxed when smaller resolutions are
+    processed.
+    
+    Change-Id: I03dd8e8e6c5e76c6eecccea15f1308f096e3fb7c
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 9435beaa25338df90874d13ad2219e4f4de805db
+Author: Larry Bassel <lbassel@codeaurora.org>
+Date:   Mon Feb 10 14:17:29 2014 -0800
+
+    iommu: move iommu header files to new locations
+    
+    Header files are no longer allowed in the directory
+    arch/arm/mach-msm/include/mach/ .
+    
+    Move the iommu related header files to a more suitable place.
+    
+    Change-Id: Ib7bbce1485d6185f669935b507040cac75368985
+    Signed-off-by: Larry Bassel <lbassel@codeaurora.org>
+
+commit bfc2aeaf33a0e5da3fa5b8db311cbe2737e56084
+Merge: d0ded20 8564a28
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Feb 13 23:07:57 2014 -0800
+
+    Merge "msm: camera2: Add support in cpp driver for HW version 4.1.0"
+
+commit 8564a2874c9055a1264570eee1decae1bc3fa848
+Author: Krupal Divvela <kdivvela@codeaurora.org>
+Date:   Fri Feb 7 16:05:19 2014 +0530
+
+    msm: camera2: Add support in cpp driver for HW version 4.1.0
+    
+    CPP driver needs to handle HW v4.1.0 which has extended the
+    command message.
+    
+    Change-Id: If9ead8af215dda6604f2fcc22b3c6a6bca51f70c
+    Signed-off-by: Krupal Divvela <kdivvela@codeaurora.org>
+
+commit 7f528a8b2cb81d1c67738f26cda86c498cbe4170
+Merge: 47fca56 b99d439
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Tue Feb 11 14:00:54 2014 -0800
+
+    Merge "msm: camera_v2: cpp: check event queue for NULL"
+
+commit 2717419636bd44475bde73fdddfe35f69a4832f0
+Merge: 31f09dd 3a5fad6
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Sat Feb 8 09:38:04 2014 -0800
+
+    Merge "msm: camera: silient non critical log in cpp"
+
+commit b99d4390577e91157c27b7c3403dfec222afd96d
+Author: Georgi Hristov <ghristov@codeaurora.org>
+Date:   Thu Dec 19 09:50:32 2013 +0200
+
+    msm: camera_v2: cpp: check event queue for NULL
+    
+    In msm_cpp_subdev_ioctl at VIDIOC_MSM_CPP_GET_EVENTPAYLOAD
+    check event queue for NULL before dereferencing command field.
+    
+    CRs-Fixed: 591850
+    Change-Id: I389cc03305119efc057f183acdda7865358c6c5d
+    Signed-off-by: Georgi Hristov <ghristov@codeaurora.org>
+
+commit 3a5fad6a244080dea9b8d056b0ddfe78c0ef6db3
+Author: Hody Hung <hhung@codeaurora.org>
+Date:   Thu Jan 9 12:26:18 2014 -0800
+
+    msm: camera: silient non critical log in cpp
+    
+    get buff error message already exist in userspace, excessive
+    log printing causes watchdog bark and stop us to get useful log
+    in userspace
+    
+    Change-Id: Icad61c9674eb17b4910c73ec4b818bf8618ac54b
+    Signed-off-by: Hody Hung <hhung@codeaurora.org>
+
+commit 375c00204f390f9e5d3c68f53415c0452afe1dfc
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Thu May 30 14:44:07 2013 -0700
+
+    msm: camera2: cpp: Append frame buffers to the list
+    
+    In case of late buffer allocation, allocated buffers
+    have to be appended to the existing queues.
+    
+    Change-Id: Ie14f00038e86b9d7c8caa01587a2ed1aee7d80e8
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit fb0392c99a77b7c89b8bb3c221e95540dcef61d8
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Mon Jan 6 01:34:20 2014 -0800
+
+    msm: cpp: Fix potential dereference of NULL pointer
+    
+    Work field in cpp_dev structure is not checked for NULL.
+    If its allocation fails, NULL pointer will be dereferenced.
+    This will cause crash in camera.
+    
+    Change-Id: I8b36f3553292b41386e231f12867ff78f8e2379d
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 46a075a05a678fa2c59ca7f0b50755c34b970088
+Merge: bf34b28 2687142
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Fri Jan 3 21:21:40 2014 -0800
+
+    Merge "msm: camera2: cpp: Set exact size for firmware loading."
+
+commit 2687142e24facf4bd69a374d975be745a98be9dd
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Thu Dec 26 17:59:25 2013 -0800
+
+    msm: camera2: cpp: Set exact size for firmware loading.
+    
+    The poll reads after during and after firmware loading fails.
+    This is because the exact size of firmware changes with the
+    version of the firmware. This change uses the firmware size
+    based on actual firmware file being loaded.
+    
+    Change-Id: I949954347a48d0b388b11b3c81fd5d1a4627cbf7
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 5d560b0e653ab51805900887f64995bd1ad3a6b4
+Merge: 3a1418b fad87fa
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Dec 19 05:52:27 2013 -0800
+
+    Merge "msm: camera: Cleanup msm generic buf queue handling"
+
+commit 995737224af279b2e92ddb81469298a9df934d0a
+Merge: 764ebbe 7d22630
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Tue Dec 17 12:31:02 2013 -0800
+
+    Merge "msm: camera: Limit prints in default cases"
+
+commit 548927cf79fab00091f55e0a19f4f12a1ff7e4aa
+Merge: df3ccbe a9e4d15
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Mon Dec 16 15:02:56 2013 -0800
+
+    Merge "msm: camera2: cpp: Release vb2 buffer in cpp driver on error"
+
+commit 7d22630c17870acdcc29e4cf916294a4fe1fb9bf
+Author: Yiduo Wang <yiduow@codeaurora.org>
+Date:   Mon Dec 2 18:26:01 2013 -0800
+
+    msm: camera: Limit prints in default cases
+    
+    Change pr_err to pr_err_ratelimited in default
+    case prints of userspace ioctl. pr_err would
+    keep printing when passing wrong parameters in ioctl
+    which will cause watchdog reset.
+    
+    Change-Id: If452c7a7d935a2d955682bbde9b78613bd703b7e
+    CRs-Fixed: 576541
+    Signed-off-by: Yiduo Wang <yiduow@codeaurora.org>
+
+commit 6918831f313c30e9e2dee83649ae48c6c418acbb
+Author: Vikram Mulukutla <markivx@codeaurora.org>
+Date:   Tue Oct 22 17:59:32 2013 -0700
+
+    msm: clk-provider: Move clock headers to include/linux/clk
+    
+    Architecutural changes in the ARM Linux kernel tree mandate the
+    eventual removal of the mach-* directories. Move the
+    mach/clk-provider and mach/clk header to include/linux/clk.
+    
+    Change-Id: I495f8332bf5d0d09ccfb236c819dea2bacb13542
+    Signed-off-by: Vikram Mulukutla <markivx@codeaurora.org>
+    Signed-off-by: Junjie Wu <junjiew@codeaurora.org>
+
+commit e7289bf5788fc72f8160d2bb9876527dca734bb9
+Merge: 6e7e32a 55e266e
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Dec 12 08:49:23 2013 -0800
+
+    Merge "msm: camera: Fix improper ion free in error case"
+
+commit 74533b8859cd1830bbed75ee004f6421fd0f9728
+Merge: dc9c5ca 3bd8ec7
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Thu Dec 12 00:08:57 2013 -0800
+
+    Merge "iommu: msm: Move iommu_domains out of mach-msm"
+
+commit 3bf982b6bd5ddb7f003e58cdfe402553080c3784
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Sun Nov 3 21:39:22 2013 -0800
+
+    msm: camera: Free queue data during camera close
+    
+    CPP hardware is singleton, only one hardware used for processing
+    frames of different camera if more than one camera is running at
+    the same time. When camera is closed ensure that processing frame
+    queue and event data queue is empty.
+    
+    Change-Id: Ie8e41431dd9b7acd29bac0f59fe2d4afa243ec2c
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+
+commit 3bd8ec73d4c307b5a6fe33307b029e7894d0e54e
+Author: Laura Abbott <lauraa@codeaurora.org>
+Date:   Fri Dec 6 13:19:12 2013 -0800
+
+    iommu: msm: Move iommu_domains out of mach-msm
+    
+    The iommu_domain code isn't really MSM specific and is better suited
+    to live in the iommu directory. Move it accordingly.
+    
+    Change-Id: Ie88b4aba6901722166bb180275d352b745821772
+    Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
+
+commit 55e266e3ee4807e4f3c2bd28da31edadd26f2cc9
+Author: Azam Sadiq Pasha Kapatrala Syed <akapatra@codeaurora.org>
+Date:   Tue Dec 10 00:17:52 2013 -0800
+
+    msm: camera: Fix improper ion free in error case
+    
+    In case of ion import failure, error value is being passed as an
+    handle to ion_free which causes invalid address access. This patch
+    fixes improper api calls in error case.
+    
+    Change-Id: Ic7a70b63cf0ee8f439d859cc941cf6450bce7254
+    Signed-off-by: Azam Sadiq Pasha Kapatrala Syed <akapatra@codeaurora.org>
+
+commit fad87faa7cf83f1afb513b540fc43ab15125d2c3
+Author: Hariram Purushothaman <hpurus@codeaurora.org>
+Date:   Mon Dec 9 11:23:13 2013 -0800
+
+    msm: camera: Cleanup msm generic buf queue handling
+    
+    Clean-up the msm camera generic buff queue when all
+    client closes the handle and also provide init-deinit
+    ioctl for cpp to open-close the buff mngr handle.
+    
+    Change-Id: Ie484174e0ffaee02e85c9c9cda8ac26103aaddd0
+    CRs-Fixed: 582261
+    Signed-off-by: Hariram Purushothaman <hpurus@codeaurora.org>
+
+commit a9e4d156646545af5e69e6627385eefd0af5b0f5
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Mon Aug 26 16:42:28 2013 -0700
+
+    msm: camera2: cpp: Release vb2 buffer in cpp driver on error
+    
+    When duplicate output is enabled, there is potential issue if
+    error is encountered in second output buffer. Under error condition
+    related to second output buffer is hit, the first output buffer is
+    not released properly.
+    
+    Change-Id: I56f375a5783c54c450f5673818d15b393f469ef1
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 8fcd89c708d3119eedfb70a18a55fdefbfb5e25d
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Mon Aug 26 17:51:04 2013 -0700
+
+    msm: camera2: cpp: Change bus scale vector call sequence
+    
+    The cpp driver can set the bus scale vector when cpp module is
+    actually included. This will avoid unnecessary power consumption
+    due to setting the bus scale vector.
+    
+    Change-Id: I898bb33f4433d8b70f63c07facd6e22d58196211
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit aea138d209c2ef212379d56c37c3358369368d4c
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Fri Nov 15 12:58:55 2013 -0800
+
+    msm: camera2: cpp: Added protection for Timeout processing.
+    
+    The timeout processing can be triggered due to delayed
+    tasklet processing. This change serialize timeout processing
+    with tasklet.
+    
+    Change-Id: I4b79d8616406a5570727854479224d96b98b79c5
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit cf6e7355f5223be53ef5a70483ebcf5c78e9fee7
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Tue Oct 29 19:03:18 2013 -0700
+
+    msm: camera2: cpp: Add IOCTL to pop stream buffer in cpp driver.
+    
+    This IOCTL provides interface for userspace cpp driver to pop
+    a buffer from stream buffer queue and do buf done.
+    
+    Change-Id: If2f8deb59a2f64aa40dc2ed2beec19f37c67c5ce
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+    Signed-off-by: Mansoor Aftab <maftab@codeaurora.org>
+
+commit a2f5ccad2e2f16d4759b9383e7e9f08a3bbd901e
+Merge: e11a9da 87b616f
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Mon Nov 11 00:30:15 2013 -0800
+
+    Merge "msm: cpp: Support separate input stream identity."
+
+commit 87b616fdb9fc99a992d4d02dff43b22d770fe7b0
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Tue Oct 8 08:10:11 2013 -0700
+
+    msm: cpp: Support separate input stream identity.
+    
+    When the input buffer is not native, its identity can be
+    different from the current stream. This change adds
+    support to hold identity of input stream.
+    
+    Change-Id: I95563337482826b9f67b6ffbfd758766f5fb4290
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 0ae983ac0fa5fcd7e92f608208fdbe1493c93f20
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Wed Nov 6 07:30:12 2013 -0800
+
+    msm:cpp: Set inst_info before send it to userspace
+    
+    If IOCTL command VIDIOC_MSM_CPP_GET_INST_INFO is
+    called, inst_info structure must be initilaized before
+    it is sent to userspace.
+    
+    Change-Id: I4936ae31ecd19cfd25cf22de32101fe3257889d6
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 3cb0bc164f9e294ded4cee7f4982dddfcea4df91
+Author: Punit Soni <punits@codeaurora.org>
+Date:   Thu Sep 26 12:54:30 2013 -0700
+
+    msm: camera: add support for firmware v1.6.0 in CPP
+    
+    APQ8084 target uses firmware version 1.6.0 for CPP. To add support for
+    this, correctly calculate frame command offset for input and output buffer
+    addresses based on firmware version.
+    
+    Change-Id: Ie03fdc12301e13ec20be0cb9956c61df49c72d8a
+    Signed-off-by: Punit Soni <punits@codeaurora.org>
+
+commit 8e31df2071418e00b8f0062fac2316ca3281b1b2
+Merge: d35ac49 3a082f6
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Wed Oct 30 05:23:43 2013 -0700
+
+    Merge "msm: camera: Proper probe deferral in pproc driver"
+
+commit 9adab9ae1f9d1338ed047a297b8421bb6c55af9a
+Merge: 5c7752a 5e10f3e
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Wed Oct 30 05:22:38 2013 -0700
+
+    Merge "msm:cpp: Validate data lenght in Set Clock command"
+
+commit 3a082f651f0719a42705acea2bd813b739564d41
+Author: Petar Sivenov <psiven@codeaurora.org>
+Date:   Tue Oct 22 18:52:21 2013 -0700
+
+    msm: camera: Proper probe deferral in pproc driver
+    
+    Error path in cpp/vpe driver was not correct in case of unavailable clock.
+    This caused a kernel crash. This patch adds proper handling of error
+    during cpp initialization:
+    In case of error during probe, the allocated resources are released and
+    returned error is propagated.
+    The patch adds similar handling in error during open.
+    
+    Change-Id: I910688d7d567f3db3d44ed815db2576f6df7258b
+    Signed-off-by: Petar Sivenov <psiven@codeaurora.org>
+
+commit 2218149ffe02cdda35aecc65fea966ccc18e1b77
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Tue Oct 8 15:53:53 2013 -0700
+
+    msm: camera2: cpp: Reduce debug prints in cpp driver
+    
+    The cpp driver had prints to monitor the status when node
+    is closed. This change makes them as pr_debug messages.
+    
+    Change-Id: I8a78e6b38d7a702ed38f980d8fa658f50439da0f
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit f42d0ee140d511f5d9f9b5fffaab90fcbd33c190
+Author: Punit Soni <punits@codeaurora.org>
+Date:   Wed Oct 9 17:55:07 2013 -0700
+
+    msm: camera: use devicetree for getting clock info in CPP
+    
+    CPP needs to use devicetree node to read the clock information.
+    This is required because, different targets may use different
+    set of clocks and this change is needed to  help maintain a
+    generic CPP driver. Fix minor compilation warning in vpe driver.
+    
+    Change-Id: I641f5051564253691da9dd0e6f45b7617f5cc2e3
+    Signed-off-by: Punit Soni <punits@codeaurora.org>
+
+commit 5e10f3e459096d7a48f021ad60065d2831d434c7
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Wed Oct 9 07:41:27 2013 -0700
+
+    msm:cpp: Validate data lenght in Set Clock command
+    
+    The lenght of the data packet recived in case of
+    VIDIOC_MSM_CPP_SET_CLOCK command must be validated.
+    It have to be equal or smaller than the size of the
+    variable used to hold the data. If this condition
+    is not met stack-based buffer overflow will occur.
+    
+    Change-Id: I68002e088aaca1ca740985d9e26e9161f130b499
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 2490e97773efaa41ef51a1d06669eb719944dd7b
+Merge: 8e22320 ddfb16d
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Wed Sep 25 19:55:21 2013 -0700
+
+    Merge "msm: camera2: cpp: Reset MICRO block before clock enable"
+
+commit ddfb16da52cbf914eb32aaf06bce2fa77a015789
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Thu Sep 5 19:45:01 2013 -0700
+
+    msm: camera2: cpp: Reset MICRO block before clock enable
+    
+    The MICRO can be triggered to enter in bad state when the
+    corresponding clock is enabled. This patch resets MICRO block and
+    then enables clock.
+    
+    Change-Id: I08128211e561026eed76041e73fa971ba369576a
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit e1df5a64178b94934f163ff4c84b6a88822d82ac
+Merge: 20686fb fe7e87c
+Author: Linux Build Service Account <lnxbuild@localhost>
+Date:   Mon Sep 23 02:32:44 2013 -0700
+
+    Merge "msm: camera2: Enhance cpp driver to support native buffers"
+
+commit 9ab48181c1704f24bf88a8644342d2c9831aab23
+Author: Laura Abbott <lauraa@codeaurora.org>
+Date:   Thu Aug 8 14:13:46 2013 -0700
+
+    msm: Update Ion and IOMMU APIs to use dma_addr_t
+    
+    The current APIs for Ion and the custom IOMMU mapping assume that
+    many parameters are unsigned long. This type is not big enough to
+    hold physical addresses on LPAE systems. Update the APIs to accomodate
+    these types. Because we are updating the APIs, all clients need to be
+    updated as well, either by using the correct type or using a cast
+    where necessary.
+    
+    Change-Id: I12e6fb6ec8a8481a7eef374cb9316e5ccbc29090
+    Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
+
+commit fe7e87cba91bd9384146b0f7e7328093e7836e07
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Sun Apr 14 22:51:12 2013 -0700
+
+    msm: camera2: Enhance cpp driver to support native buffers
+    
+    The cpp driver can be used in pure offline mode. In this case
+    the input and output buffers are native buffer and not from
+    vb2 queue. This change enhances cpp driver to be configured
+    to use native buffers for input and output.
+    
+    Change-Id: I835296b56a406be73c2b3a0f71c75e748ff04473
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 4e302b21dcfa27571e7684ce3e07d5f4bee5e5d5
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Mon Aug 26 18:27:46 2013 -0700
+
+    msm: camera2: cpp: Add support to enable turbo mode dynamically
+    
+    The input stream can have varying properties. Based on the input
+    the clock can be set to turbo mode. This change adds support
+    for necessary IOCTL.
+    
+    Change-Id: Iafb3c6bd94f6bee4993d6bc679d693c71b37d3bd
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 1a618f284495453cbd724e9706710719b0f27408
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Fri Aug 23 10:03:31 2013 -0700
+
+    msm:cpp: Fix for spurious interrupts from CPP hardware
+    
+    When power up the CPP, it generates spurious interrupts
+    that can confuse microntroller and halt it. This fix
+    clears the interrupt requests from CPP before enable
+    Microcontroller at "Open Camera" event.
+    
+    Change-Id: I3b75f2513efc30fb0f35dd086464f0b6c3a6ff9b
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit 7bbe20103d6390fe159e55eee64a8f84d9cca64c
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Fri Aug 23 12:02:03 2013 -0700
+
+    msm: cpp: Attach/detach iommu device on open/close node
+    
+    Change the iommu device attachement to happen on
+    cpp_open_node and detachment in cpp_close_node.
+    It decrease the power consumption when Camera is not
+    working.
+    
+    Change-Id: I7f8d65e14af2949d9512191459d313ac4d3fff9c
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit be01622de040c991b4b64e3fdeca95c9c2f54efc
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Tue Aug 27 19:50:39 2013 -0700
+
+    msm:cpp: Add support for firmware versions 1.2.x for msm8x26
+    
+    CPP core in msm8x26 is version 2.0.0. This must be taken in
+    account when migrating from firmware version 1.1.6 to version
+    1.2.A.
+    
+    Change-Id: Idf8967d0d2f130dd6cf32efa0442797fae9e53a8
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit f65ec1dd86ad5cd6e79950773df5ffb3cbffb460
+Author: Seemanta Dutta <seemanta@codeaurora.org>
+Date:   Fri Jul 26 13:39:05 2013 -0700
+
+    msm: camera: Add lower and upper bounds check in msm_cpp.c ioctl()
+    
+    Add a check for upper and lower bounds in msm_cpp_subdev_ioctl() for
+    command code VIDIOC_MSM_CPP_DEQUEUE_STREAM_BUFF_INFO.
+    
+    CRs-fixed: 518731
+    Change-Id: I72996e13b7370a3b49f645297c52a118775b2b12
+    Signed-off-by: Seemanta Dutta <seemanta@codeaurora.org>
+
+commit afb8188a19a905277a0d65549b45b4e42b3ab8ec
+Author: Hariram Purushothaman <hpurus@codeaurora.org>
+Date:   Wed Jul 17 15:55:30 2013 -0700
+
+    msm: camera: Fix various small issues in cpp driver
+    
+    Add NULL check for fw_name_bin before freeing it.
+    Release cpp_dev mutex in error cases, Length check
+    msg_len for cpp info frames.
+    
+    Change-Id: I5155645e7c2e22739737dc8fbddce37839644516
+    CRs-Fixed: 507190, 506036, 506033
+    Signed-off-by: Hariram Purushothaman <hpurus@codeaurora.org>
+
+commit fc710d800f4c21b9a7c0d9b5e522ebc2ba7fffb3
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Tue Jul 16 19:30:00 2013 -0700
+
+    msm: camera2: Validate frame during timeout in cpp driver
+    
+    During long stability stress runs, invalid frames are encountered
+    in timeout processing. When frame acknowledgement is delayed by
+    firmware due to various reasons the timeout handler could hit
+    frame that are already processed. Hence adding NULL condition
+    check to avoid invalid frame access.
+    
+    Change-Id: Icaa5e630d5190a7bf0a4e07a95d08e116cb304db
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit e4e4aa6438def3cc5c88f65b0e5e491ef9eeea33
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Mon Jul 1 11:50:10 2013 -0700
+
+    msm: camera: Update CPP driver for new hardware version
+    
+    Update CPP driver for 0x10010001 version which is used in 8974 v3
+    pro.
+    
+    Change-Id: Iefb7d4fa852a3548e866f460994a0c1744578e36
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+
+commit 2ff807f477838932dfaae3e16e5f4514983fea41
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Thu Jul 4 04:32:57 2013 -0700
+
+    msm:cpp: Check number of buffers before allocate stream_info
+    
+    Number of buffers used by cpp is defined by user space. In
+    case this number is ZERO the allocated memory space will be
+    pointed by ZERO_SIZE_PTR. Referencing ZERO_SIZE_PTR, causes
+    same type of behavior as referencing the NULL pointer
+    
+    Change-Id: I42665225c7d055cda6749198c35e94c1442c6d3e
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit f087ed5f222cad2229011bf1deda9ce4c9e8ffa7
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Thu Jun 20 18:12:11 2013 -0700
+
+    msm: camera2: Enhance processed divert in cpp driver.
+    
+    The processed divert frames from cpp driver can be queued back
+    to free queue or queued in done queue. This change enhances
+    cpp driver to support both modes of operation.
+    
+    Change-Id: I2ec08bd9c25fdb1db089d974c935e97898840e39
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 9cccf23ff5392747bf06e9bcaa71356283669006
+Author: Aditya Jonnalagadda <ajonnala@codeaurora.org>
+Date:   Thu Jul 11 10:18:16 2013 +0530
+
+    msm: camera: Fix zero bytes alloc issue in cpp driver
+    
+    Add proper check in cpp driver to verify the allocation
+    is success or not to fix allocation failure issue for
+    zero bytes request.
+    
+    Change-Id: I5fc0ccd3919874216afa5e81d939a64a10a14a76
+    CRs-Fixed: 489704
+    Signed-off-by: Aditya Jonnalagadda <ajonnala@codeaurora.org>
+
+commit 63069fff84a1be368e9c323d2dc6333e630ff492
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Sat May 4 20:45:42 2013 -0700
+
+    msm: camera2: Enable processed divert logic
+    
+    Expose separate ioctl to perform buf done so that user space
+    driver can use that ioctl to do buf done after getting back the
+    buffer from downstream sub module.
+    
+    Change-Id: Id5841db80c286de737f36b3c752c63cacffb7191
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit ca9411815b22eb3464c9759a972158a2b5052f31
+Author: Nishant Pandit <npandit@codeaurora.org>
+Date:   Wed Jun 19 07:14:02 2013 +0530
+
+    msm: camera: Add fix to avoid array index out of bound in cpp
+    
+      The parameter for number of buffers passed from user space
+    may be very large. While allocating memory, this could result
+    in integer overflow. As a result lesser memory will be allocated
+    then expected. This inturn may result in array index out of bound
+    error when the pointer is used to access memory.
+    
+      The fix is to limit the maximum requested buffers per stream. If
+    request is greater than the maximum value, error is returned back
+    to user space.
+    
+    CRs-Fixed: 489273
+    Change-Id: I3d316f439610609cd36615eea3e68d0e8a0be0d7
+    Signed-off-by: Nishant Pandit <npandit@codeaurora.org>
+    (cherry picked from commit b7126cdd15b764bad8fe9fafe3dbd6ee3e8d44ec)
+
+commit 0932ea278f08ae699151fb99a80c0c5d13d0f055
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Tue Jun 18 15:49:44 2013 -0700
+
+    Revert "msm: cpp: Attach/detach iommu device on open/close node"
+    
+    This reverts commit 769e27414a84a2c17d469681869cdb5a2bd51307.
+    
+    Change-Id: I3ab988661f5fcd99d37c988b9fb04d07dbcf4738
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit c429ea263c7cc2e6022b94d0d909c9f9054ee8df
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Sat Jun 15 13:04:41 2013 -0700
+
+    msm: camera2: Enhance cpp driver for error handling
+    
+    The MICRO reports error status. The cpp driver is enhanced to
+    report such errors and recover from such error conditions.
+    
+    Change-Id: I6355125c89619679a78ba40b568b81d6094661e3
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 4dbc44c06c28e7af7b56ecf36ed92d63331a1acc
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Thu Jun 6 19:49:25 2013 -0700
+
+    msm: camera2: Add recovery mechanism in cpp driver
+    
+    The CPP MICRO can enter freeze conditions in which case the
+    MICRO is reboot and the frame is rescheduled.
+    
+    Change-Id: Ia529ed6b536966f2cfd4748b618a8cc064856f28
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 650da8923f53b44908b729c6d57e114b664f3fa1
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Wed May 22 16:13:01 2013 -0700
+
+    msm: cpp: Attach/detach iommu device on open/close node
+    
+    Change the iommu device attachement to happen on
+    cpp_open_node and detachment in cpp_close_node.
+    It decrease the power consumption when Camera is not
+    working.
+    
+    Change-Id: I661e92e1cea294d0333e1376d7f5cdfc7cd1c2e8
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit aa19d811be8278a50de541241b3f42e2ec24245b
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Fri May 10 15:52:49 2013 -0700
+
+    msm: camera: Disable gdsc_vfe regulator during cpp release
+    
+    gdsc_vfe regulator is not disabled during cpp release. This causes
+    power drain. Disable gdsc_vfe regulator during cpp release which
+    is called when camera is closed.
+    
+    Change-Id: I8ca80e7ee322b13196976802a1de8e6879638199
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+
+commit 90eb13138a11c6140ee05386b1a312fe074a7b3d
+Author: Iliya Varadzhakov <ivarad@codeaurora.org>
+Date:   Tue May 21 15:57:48 2013 -0700
+
+    msm: pproc: Change error handling for msm_iommu_get_ctx
+    
+    Change the msm_cpp code so it can handle error code
+    EPROBE_DEFER returned from msm_iommu_get_ctx in case
+    of fault.
+    
+    Change-Id: Iea91eb808a8f76e2ba8079c7e585961f4aa3709f
+    Signed-off-by: Iliya Varadzhakov <ivarad@codeaurora.org>
+
+commit b8db771c7348fc650ab9f9fab55f6f69bb9966d2
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Thu May 9 07:55:53 2013 -0700
+
+    msm: camera2: Add support to firmware v1_2_3 in cpp driver.
+    
+    New firmware v1_2_3 with bug fixes for zoom is available. The
+    CPP driver is enhanced to support this version of firmware so
+    that the freeze issues seen during zoom will be resolved.
+    
+    Change-Id: Icf5f9eb139e0341ea774d3cbd8c8854e7a999772
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 36cde578055eda177933406f6b42784fcdc96877
+Author: Tanya Finkel <tfinkel@codeaurora.org>
+Date:   Mon Jun 3 01:47:24 2013 +0300
+
+    msm8974-Camera: Fix the reset stable issue on DB 8074
+    
+    From the user space were passed pointer  that not allocated and
+    it cause to memory corruption and reset issue.
+    
+    Change-Id: Iaa2521757f11d37836566d7982d010c33bf98f87
+    Signed-off-by: Tanya Finkel <tfinkel@codeaurora.org>
+
+commit aa49d48b3be1e9cfdc8fb2ced114a2de58ea5067
+Author: Punit Soni <punits@codeaurora.org>
+Date:   Mon Apr 29 19:01:55 2013 -0700
+
+    msm: camera: support output-duplication in cpp
+    
+    If two streams need same output buffer from cpp, duplication
+    functionality from cpp hardware can be used. This elminates need for
+    redundant 2-pass processing.
+    
+    Change-Id: I672362360472fe9485acebc6abef89ba8a587b72
+    Signed-off-by: Punit Soni <punits@codeaurora.org>
+
+commit 5a9adbb8407e7fbafcf413f576dc273afe2a5b69
+Author: Ankit Premrajka <ankitp@codeaurora.org>
+Date:   Wed May 1 17:02:17 2013 -0700
+
+    msm: camera_v2: handle subdev releases when qcamera daemon crashes.
+    
+    When the daemon crashes, all the subdevs need to be released in a
+    specific order to ensure proper clean-up. This change creates
+    an ordered list of the subdevs during individual registrations,
+    based on their close sequences, and uses this list to make the release
+    subdev calls.
+    
+    Change-Id: Ic95e53d88ba84f13b9db26f820822ed68dca48dc
+    Signed-off-by: Ankit Premrajka <ankitp@codeaurora.org>
+
+commit e45522f1b2e610074b62861c3be162d128628ba1
+Author: Mridul Singh <mridul@codeaurora.org>
+Date:   Thu Apr 25 15:04:07 2013 -0700
+
+    msm: camera2: Silence non-critical logs in cpp driver
+    
+    The cpp driver request for output buffers from vb2 queue. When
+    buffers are not available in queue, the cpp driver can skip
+    processing of input frame. The non-availability of output
+    buffers are traced in cpp userspace driver and kernel driver
+    need not flood such error logs. This change silences such
+    non-critical logs.
+    
+    Change-Id: I46294a772ebda67d7deebca3b8f867e8d2fc8e93
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 39efe4f22209c6e0c38253190a682e8855997315
+Author: Kevin Chan <ktchan@codeaurora.org>
+Date:   Mon Apr 15 17:53:39 2013 -0700
+
+    msm: camera: Update CPP bandwidth request
+    
+    Reduce CPP bandwidth request to 1Gbps in order to
+    avoid pushing bimc to 460mhz
+    
+    Change-Id: Ibb9bafae5a6d5e82cf967493515facbbc681b70b
+    Signed-off-by: Kevin Chan <ktchan@codeaurora.org>
+
+commit f61750baf63d44f51f749e4e5f7e129ae7b820eb
+Author: Kevin Chan <ktchan@codeaurora.org>
+Date:   Tue Mar 19 16:28:39 2013 -0700
+
+    msm: camera: Add support for dynamic bus scaling
+    
+    ISP bus vector should be calculated based on input
+    data rate and output dimensions. The vectors will
+    be dynamically changed based on the ISP output
+    enabled.
+    
+    Change-Id: I7cbbf8fc5231b64a91c61cc7a2136bf8c09a730a
+    Signed-off-by: Kevin Chan <ktchan@codeaurora.org>
+
+commit 72e2eb2cdbd7d2f4754bd5627e8932bc6c48fd26
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Mon Apr 1 19:37:20 2013 -0700
+
+    msm: camera2: Add support to send error status in cpp driver
+    
+    The error status need to be sent as part of the payload so
+    that userspace can identify and do frame skip if needed.
+    
+    Change-Id: I02e42439e84d71dc34e90ebb76f7da75c3f3c180
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit e01fbb199f4a65e3ee9b994b325f812163394161
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Sun Mar 17 00:21:07 2013 -0700
+
+    msm: camera2: Enhance cpp driver
+    
+    The cpp driver is enhanced to store the buffer mapping info. This
+    helps to get vb2 buffers directly from vb2 queue in kernel space.
+    The redundant queues in cpp kernel driver is removed as because
+    the userspace streamlines the priority based queue.
+    
+    Change-Id: I304c1b929f73331f89b7ac666222156b9f3e9063
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 32fa4e8554200fa8203f5690a095fcb0920adff8
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Sat Mar 16 02:48:37 2013 -0700
+
+    msm: camera2: Add tasklet for cpp device
+    
+    The bottom half for cpp driver is handled by tasklet. This
+    enhancement enables cpp driver to interface with buffer manager
+    subdevice for vb2 buffer operations.
+    
+    Change-Id: I2905af64e4afa251e53a346185e3f4dcbeb1f834
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 1ce48a773201f6b0ae9a26dda7a2172395565627
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Mon Mar 18 00:43:14 2013 -0700
+
+    msm: camera2: Enhance flush queue interface in cpp driver
+    
+    The flush function is enhanced to avoid queueing to HW. Instead
+    directly the frames are sent to userspace.
+    
+    Change-Id: If5458009a71e8663d2390f434e25dd0f5dc66eeb
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 96c84bb46f76d080e9fff7440d2974be07eebf65
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Sun Mar 17 20:35:50 2013 -0700
+
+    msm: camera2: Fix to flush the queue in cpp driver
+    
+    The kernel driver supports flush interface to allow flusing
+    the queue.
+    
+    Change-Id: I4f71a53cf9d384a1ce3b27d6bd10874ca9f45189
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit de633f8423ce30288467f158a51766113d177c03
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Wed Mar 6 03:11:57 2013 -0800
+
+    msm: camera2: Add support for HW information based FW load
+    
+    This change adds support to read the HW information and use it
+    to select FW version.
+    
+    Change-Id: I8ce11341f87b61668f907e969e07bdde5601c066
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 2ef755eee98e64add8333042a3333d8d1637b6c2
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Fri Mar 1 13:35:03 2013 -0800
+
+    msm: camera2: Fix ION memory release in cpp driver
+    
+    The ION handles were not properly released. This change releases
+    the ION handle after hardware acknowledgement.
+    
+    Change-Id: Ie3a86e23837a94a1b15d6e2cf2029da3e1c4e1ec
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit bd4136c267d8941fb35ff514ebc2d471cab9945a
+Author: Rajakumar Govindaram <rajakuma@codeaurora.org>
+Date:   Fri Feb 1 01:18:12 2013 -0800
+
+    msm: camera2: Enhance cpp driver.
+    
+    This change adds necessary state and IOCTL interface for correct
+    sequence of firmware loading. This also helps to avoid redundant firmware
+    loading.
+    
+    Change-Id: I1aff000b36bfe0fbe2fabb01b9a23e1f86bf1a88
+    Signed-off-by: Rajakumar Govindaram <rajakuma@codeaurora.org>
+
+commit 2a35f7b1e3eaed795408150e6b502ab2100996a1
+Author: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
+Date:   Wed Nov 21 18:26:40 2012 -0800
+
+    msm: camera2: Add driver for cpp module
+    
+    Add driver for Camera Post Processing hardware. This
+    module is responsible for supporting scaling, cropping,
+    rotation, flip, wavelet denoise and Sharpening features.
+    
+    Change-Id: I4b130a5e53d40f96186992d540b93bbf4f8e628f
+    Signed-off-by: Sreesudhan Ramakrish Ramkumar <srramku@codeaurora.org>
